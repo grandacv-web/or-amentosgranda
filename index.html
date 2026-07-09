@@ -1035,6 +1035,77 @@
   }
   .op-btn-calc:hover { background: var(--brand-light); }
 
+  /* ── Header "Resultado — Custos Operacionais" — botões mais visíveis ── */
+  .op-resultado-header { flex-wrap: wrap; gap: 10px; }
+  .op-resultado-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .op-resultado-header .btn-salvar-orc {
+    margin-left: 0;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.45);
+    padding: 8px 16px;
+    font-size: 12.5px;
+  }
+  .op-resultado-header .btn-salvar-orc:hover { background: rgba(255,255,255,.26); }
+  .op-btn-pdf {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .3px;
+    transition: background .15s;
+  }
+  .op-btn-pdf:hover { background: var(--accent-dark); }
+
+  /* ── Resultado Custos Operacionais — cards de resumo + lista compacta ── */
+  .op-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .op-stat-card {
+    background: #f8f9fb;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .op-stat-label { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .op-stat-value { font-size: 17px; font-weight: 800; color: var(--brand); margin-top: 4px; }
+
+  .op-compact-list {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .op-compact-item { border-bottom: 1px solid var(--border); }
+  .op-compact-item:last-child { border-bottom: none; }
+  .op-compact-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .op-compact-row:hover { background: #f8f9fb; }
+  .op-compact-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .op-compact-icon { font-size: 14px; flex-shrink: 0; }
+  .op-compact-name { font-size: 12.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .op-compact-chevron { font-size: 10px; color: var(--muted); transition: transform .15s; flex-shrink: 0; }
+  .op-compact-row.aberto .op-compact-chevron { transform: rotate(180deg); }
+  .op-compact-value { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; margin-left: 12px; }
+  .op-compact-detalhe {
+    font-size: 11.5px;
+    color: var(--muted);
+    padding: 0 14px 10px 36px;
+    line-height: 1.5;
+  }
+  .op-compact-hint { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+
 </style>
 </head>
 <body>
@@ -1758,11 +1829,11 @@
   </div>
 
   <div class="card">
-    <div class="card-header">
+    <div class="card-header op-resultado-header">
       <span class="icon">📊</span> Resultado — Custos Operacionais
-      <div style="margin-left:auto;display:flex;align-items:center;">
+      <div class="op-resultado-actions">
         <button onclick="salvarOperacionais(this)" class="btn-salvar-orc">💾 Salvar Operacionais</button>
-        <button onclick="gerarPdfOperacionais()" style="margin-left:8px;background:#E5006C;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📄 Gerar PDF</button>
+        <button onclick="gerarPdfOperacionais()" class="op-btn-pdf">📄 Gerar PDF</button>
       </div>
     </div>
     <div class="card-body" id="op-resultado">
@@ -2145,7 +2216,7 @@
     let mobilizacaoRodoviaria = 0, mobilizacaoAerea = 0;
     if (!passagemAerea) {
       mobilizacaoRodoviaria = distanciaKm * OP_VALOR_KM_MOBILIZACAO * 2;
-      add('🚐', 'Mobilização Rodoviária', distanciaKm + 'km × ' + fmtBRL(OP_VALOR_KM_MOBILIZACAO) + '/km × 2 (ida e volta)', mobilizacaoRodoviaria);
+      add('🚐', 'Mobilização Rodoviária', distanciaKm + 'km × ' + fmtBRL(OP_VALOR_KM_MOBILIZACAO) + '/km × 2 (ida e volta)', mobilizacaoRodoviaria, 'mobilizacao');
     } else {
       mobilizacaoAerea = OP_PASSAGEM_AEREA_BASE
         + (aluguelCarro ? diasInstalacao * OP_ALUGUEL_CARRO_DIARIA : 0)
@@ -2154,7 +2225,7 @@
         'Passagem ' + fmtBRL(OP_PASSAGEM_AEREA_BASE)
         + (aluguelCarro ? ' + aluguel de carro ' + diasInstalacao + 'd × ' + fmtBRL(OP_ALUGUEL_CARRO_DIARIA) : '')
         + (kmAeroporto > 0 ? ' + deslocamento ' + kmAeroporto + 'km × ' + fmtBRL(OP_VALOR_KM_MOBILIZACAO) : ''),
-        mobilizacaoAerea);
+        mobilizacaoAerea, 'mobilizacao');
     }
 
     let frete = 0;
@@ -2176,26 +2247,26 @@
       if (tipoEl === 'PTA') {
         const valorPTA = opGetNum('op-elevacao-pta-' + i);
         elevacaoTotal += valorPTA;
-        add('🏗️', 'Elevação — PTA', 'Valor a orçar, informado manualmente (qtd. ' + qtdEl + ')', valorPTA);
+        add('🏗️', 'Elevação — PTA', 'Valor a orçar, informado manualmente (qtd. ' + qtdEl + ')', valorPTA, 'extras');
       } else {
         const el = opBuscarElevacao(tipoEl);
         const custoEl = qtdEl * el.cobrar;
         elevacaoTotal += custoEl;
-        add('🏗️', 'Elevação — ' + tipoEl, qtdEl + '× ' + fmtBRL(el.cobrar) + ' (custo ' + fmtBRL(el.custo) + ' + índice ' + (el.indice*100).toFixed(0) + '%)', custoEl);
+        add('🏗️', 'Elevação — ' + tipoEl, qtdEl + '× ' + fmtBRL(el.cobrar) + ' (custo ' + fmtBRL(el.custo) + ' + índice ' + (el.indice*100).toFixed(0) + '%)', custoEl, 'extras');
       }
     }
 
     const valorRigging = planoRigging ? OP_PLANO_RIGGING : 0;
-    add('🪢', 'Plano de Rigging', 'Serviço adicional de rigging', valorRigging);
+    add('🪢', 'Plano de Rigging', 'Serviço adicional de rigging', valorRigging, 'extras');
 
     const valorART = art ? valorPedido * OP_ART_PERC : 0;
-    add('📋', 'ART', (OP_ART_PERC*100).toFixed(0) + '% sobre o valor do pedido', valorART);
+    add('📋', 'ART', (OP_ART_PERC*100).toFixed(0) + '% sobre o valor do pedido', valorART, 'extras');
 
     const valorRemocaoPlaca = remocaoPlaca ? (valorInstalacao + condicoesExtras) * OP_REMOCAO_PLACA_PERC : 0;
-    add('🪧', 'Remoção de Placa', (OP_REMOCAO_PLACA_PERC*100).toFixed(0) + '% sobre (instalação + condições extras)', valorRemocaoPlaca);
+    add('🪧', 'Remoção de Placa', (OP_REMOCAO_PLACA_PERC*100).toFixed(0) + '% sobre (instalação + condições extras)', valorRemocaoPlaca, 'extras');
 
     const valorSeguro = seguroObra ? OP_SEGURO_OBRA : 0;
-    add('🛡️', 'Seguro de Obra', 'Valor fixo', valorSeguro);
+    add('🛡️', 'Seguro de Obra', 'Valor fixo', valorSeguro, 'extras');
 
     const total = valorInstalacao + condicoesExtras + mobilizacaoRodoviaria + mobilizacaoAerea
                 + frete + elevacaoTotal + valorRigging + valorART + valorRemocaoPlaca + valorSeguro;
@@ -2219,6 +2290,13 @@
     return opState.ultimoResultado;
   }
 
+  const OP_GRUPOS = [
+    { key: 'instalacao',  label: 'Instalação',  icon: '🛠️' },
+    { key: 'mobilizacao', label: 'Mobilização', icon: '🚐' },
+    { key: 'frete',       label: 'Frete',       icon: '🚛' },
+    { key: 'extras',      label: 'Extras',      icon: '🧾' },
+  ];
+
   function opRenderResultado() {
     const container = document.getElementById('op-resultado');
     if (!container) return;
@@ -2227,21 +2305,32 @@
       container.innerHTML = '<div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>';
       return;
     }
-    const itensHTML = r.itens.map(it => `
-      <div class="material-item">
-        <div class="mat-icon">${it.icon}</div>
-        <div class="mat-info">
-          <div class="mat-name">${escHtml(it.nome)}</div>
-          <div class="mat-detail">${escHtml(it.detalhe)}</div>
+    const statsHTML = OP_GRUPOS.map(g => {
+      const subtotal = arred(r.itens.filter(it => it.categoria === g.key).reduce((s, it) => s + it.valor, 0), 2);
+      return `
+        <div class="op-stat-card">
+          <div class="op-stat-label">${g.icon} ${g.label}</div>
+          <div class="op-stat-value">${fmtBRL(subtotal)}</div>
+        </div>`;
+    }).join('');
+    const itensHTML = r.itens.map((it, i) => `
+      <div class="op-compact-item">
+        <div class="op-compact-row" onclick="opToggleDetalhe(${i})">
+          <div class="op-compact-main">
+            <span class="op-compact-icon">${it.icon}</span>
+            <span class="op-compact-name">${escHtml(it.nome)}</span>
+            <span class="op-compact-chevron">▾</span>
+          </div>
+          <div class="op-compact-value">${fmtBRL(it.valor)}</div>
         </div>
-        <div class="mat-cost">
-          <div class="val">${fmtBRL(it.valor)}</div>
-        </div>
+        <div class="op-compact-detalhe" id="op-detalhe-${i}" style="display:none;">${escHtml(it.detalhe)}</div>
       </div>
     `).join('');
     container.innerHTML = `
-      <div class="material-list">${itensHTML}</div>
-      <div class="total-box">
+      <div class="op-stat-grid">${statsHTML}</div>
+      <div class="op-compact-list">${itensHTML}</div>
+      <div class="op-compact-hint">Clique numa linha para ver o detalhe do cálculo</div>
+      <div class="total-box" style="margin-top:14px;">
         <div>
           <div class="label">Total de Custos Operacionais</div>
           <div style="font-size:11px;opacity:.7;margin-top:2px;">Instalação, frete, mobilização e extras</div>
@@ -2254,6 +2343,15 @@
         <span>🕒 Prazo estim. frete fracionado: <strong>${r.prazoFracionado || '—'} dia(s)</strong></span>
       </div>
     `;
+  }
+
+  function opToggleDetalhe(i) {
+    const det = document.getElementById('op-detalhe-' + i);
+    if (!det) return;
+    const row = det.previousElementSibling;
+    const aberto = det.style.display !== 'none';
+    det.style.display = aberto ? 'none' : 'block';
+    if (row) row.classList.toggle('aberto', !aberto);
   }
 
   // ── Frente Adesivada ───────────────────────────────────────────────────────
