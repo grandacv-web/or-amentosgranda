@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orçamentação Granda — Letras Caixas</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
 
 <!-- ══ FIREBASE — cole aqui as suas credenciais ══════════════════════════════
      1. Acesse https://console.firebase.google.com/
@@ -66,6 +67,42 @@
   if (typeof carregarListaRM === 'function') carregarListaRM();
 </script>
 <!-- ████████████ FIM DO BLOCO PROTEGIDO — LISTA DE RM / FIREBASE ████████ -->
+
+<!-- ██ Bloco adicional — LISTA DE CUSTOS OPERACIONAIS SALVOS (Firebase) ██ -->
+<script type="module">
+  import { getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getDatabase, ref, push, set, onValue, remove }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+  const appOp     = getApp();
+  const dbOp      = getDatabase(appOp);
+  const opListRef = ref(dbOp, 'granda_operacionais_list');
+
+  window._fbSalvarOperacional = function(entrada) {
+    return push(opListRef, entrada).then(snap => snap.key);
+  };
+  window._fbAtualizarOperacional = function(fbKey, entrada) {
+    return set(ref(dbOp, 'granda_operacionais_list/' + fbKey), entrada);
+  };
+  window._fbExcluirOperacional = function(firebaseKey) {
+    return remove(ref(dbOp, 'granda_operacionais_list/' + firebaseKey));
+  };
+  window._fbEscutarListaOperacionais = function(callback) {
+    onValue(opListRef, snap => {
+      const raw = snap.val() || {};
+      const lista = Object.entries(raw)
+        .map(([key, val]) => ({ ...val, _fbKey: key }))
+        .sort((a, b) => b.id - a.id);
+      callback(lista);
+    });
+  };
+
+  window._firebaseOpOk = true;
+  console.log('✅ Firebase (Custos Operacionais salvos) conectado.');
+  if (typeof carregarListaOperacionais === 'function') carregarListaOperacionais();
+</script>
+<!-- ██ FIM DO BLOCO — LISTA DE CUSTOS OPERACIONAIS SALVOS ██ -->
+
 <style>
   :root {
     --brand:       #1B2B6E;
@@ -151,6 +188,14 @@
     gap: 8px;
   }
   .card-header .icon { font-size: 16px; }
+  #orc-toolbar-card { overflow: visible; }
+  #orc-toolbar-header {
+    position: sticky;
+    top: var(--navbar-h, 46px);
+    z-index: 190;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,.14);
+  }
   .card-body { padding: 20px; }
 
   .full-width { grid-column: 1 / -1; }
@@ -1039,6 +1084,10 @@
     📋 Lista de RM
     <span class="nav-badge" id="lista-badge"></span>
   </button>
+  <button class="nav-tab" onclick="setView('lista-operacional')" id="nav-lista-operacional">
+    🗂️ Operacionais Salvos
+    <span class="nav-badge" id="lista-operacional-badge"></span>
+  </button>
 </nav>
 
 <div id="proj-header-wrap" style="max-width:980px;margin:24px auto 0;padding:0 20px;">
@@ -1483,8 +1532,8 @@
   </div>
 
   <!-- ── Painel de Resultados ── -->
-  <div class="card">
-    <div class="card-header">
+  <div class="card" id="orc-toolbar-card">
+    <div class="card-header" id="orc-toolbar-header">
       <span class="icon">📋</span> Orçamento do Projeto
       <div style="margin-left:auto;display:flex;align-items:center;">
         <button onclick="salvarOrcamento(this)" class="btn-salvar-orc">💾 Salvar Orçamento</button>
@@ -1709,7 +1758,13 @@
   </div>
 
   <div class="card">
-    <div class="card-header"><span class="icon">📊</span> Resultado — Custos Operacionais</div>
+    <div class="card-header">
+      <span class="icon">📊</span> Resultado — Custos Operacionais
+      <div style="margin-left:auto;display:flex;align-items:center;">
+        <button onclick="salvarOperacionais(this)" class="btn-salvar-orc">💾 Salvar Operacionais</button>
+        <button onclick="gerarPdfOperacionais()" style="margin-left:8px;background:#E5006C;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📄 Gerar PDF</button>
+      </div>
+    </div>
     <div class="card-body" id="op-resultado">
       <div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>
     </div>
@@ -1744,6 +1799,33 @@
   </div>
 </div>
 
+<!-- ── Vista: Lista de Custos Operacionais Salvos ── -->
+<div id="view-lista-operacional" style="display:none;">
+  <div class="card">
+    <div class="card-header">
+      <span class="icon">🗂️</span> Custos Operacionais Salvos
+      <div class="lista-filtros">
+        <span class="filter-label">De:</span>
+        <input type="date" id="filtro-op-de" class="filter-input" onchange="renderListaOperacionais()">
+        <span class="filter-label">Até:</span>
+        <input type="date" id="filtro-op-ate" class="filter-input" onchange="renderListaOperacionais()">
+        <span class="filter-label">Pedido:</span>
+        <input type="text" id="filtro-op-pedido" class="filter-input" placeholder="Nº pedido..." oninput="renderListaOperacionais()" style="width:140px;">
+        <button class="btn-filtro-limpar" onclick="limparFiltrosListaOperacionais()">✕ Limpar filtro</button>
+      </div>
+    </div>
+    <div class="card-body" style="padding:16px;">
+      <div id="lista-operacional-container">
+        <div class="lista-empty">
+          <div class="big">🚚</div>
+          <p>Nenhum custo operacional salvo ainda.<br>
+          Clique em <strong>💾 Salvar Operacionais</strong> (na aba Custos Operacionais) para registrar um aqui.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script>
@@ -1756,6 +1838,14 @@
   let proximoId = 1;
   let _editandoFbKey = null; // quando não-nulo, estamos editando uma RM já salva
   let _lastItems = []; // snapshot dos itens do último calcular()
+
+  // Ajusta a variável --navbar-h para o header sticky "Orçamento do Projeto" grudar
+  // exatamente abaixo da nav-bar, sem sobrepor nem deixar vão.
+  function ajustarNavbarHeight() {
+    const nav = document.querySelector('.nav-bar');
+    if (nav) document.documentElement.style.setProperty('--navbar-h', nav.offsetHeight + 'px');
+  }
+  window.addEventListener('resize', ajustarNavbarHeight);
 
   // ══════════════════════════════════════════════════════════════════════
   // CUSTOS OPERACIONAIS — Instalação, Frete e Mobilização
@@ -3399,6 +3489,10 @@
       opCustos:    (typeof opColetarInputs === 'function') ? opColetarInputs() : undefined
     };
     localStorage.setItem('granda_projeto', JSON.stringify(dados));
+    // Mantém o campo "Cidade / UF do destino" (Custos Operacionais) sempre em dia,
+    // mesmo que essa aba não esteja visível no momento — corrige bug em que o campo
+    // ficava mostrando a cidade/UF do projeto anterior após trocar de destino.
+    if (typeof opAtualizarVisibilidade === 'function') opAtualizarVisibilidade();
     if (typeof agendarCalculoAutoDistancia === 'function') agendarCalculoAutoDistancia();
   }
 
@@ -3757,6 +3851,89 @@
     badge.classList.toggle('visible', n > 0);
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // LISTA DE CUSTOS OPERACIONAIS SALVOS (avulsos, sem vínculo a um orçamento)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  let savedOperacionaisList = [];
+
+  function carregarListaOperacionais() {
+    if (window._firebaseOpOk && window._fbEscutarListaOperacionais) {
+      window._fbEscutarListaOperacionais(function(lista) {
+        savedOperacionaisList = lista;
+        atualizarBadgeListaOperacionais();
+        const viewListaOp = document.getElementById('view-lista-operacional');
+        if (viewListaOp && viewListaOp.style.display !== 'none') renderListaOperacionais();
+      });
+    }
+  }
+
+  function atualizarBadgeListaOperacionais() {
+    const badge = document.getElementById('lista-operacional-badge');
+    if (!badge) return;
+    const n = savedOperacionaisList.length;
+    badge.textContent = n;
+    badge.classList.toggle('visible', n > 0);
+  }
+
+  function renderListaOperacionais() {
+    const container = document.getElementById('lista-operacional-container');
+    if (!container) return;
+    const de       = document.getElementById('filtro-op-de')?.value     || '';
+    const ate      = document.getElementById('filtro-op-ate')?.value    || '';
+    const pedBusca = (document.getElementById('filtro-op-pedido')?.value || '').trim().toLowerCase();
+    let lista = savedOperacionaisList.slice();
+    if (de)       lista = lista.filter(e => new Date(e.dataSalvo) >= new Date(de  + 'T00:00:00'));
+    if (ate)      lista = lista.filter(e => new Date(e.dataSalvo) <= new Date(ate + 'T23:59:59'));
+    if (pedBusca) lista = lista.filter(e => (e.pedido || '').toLowerCase().includes(pedBusca)
+                                         || (e.job    || '').toLowerCase().includes(pedBusca));
+    if (lista.length === 0) {
+      const msg = savedOperacionaisList.length === 0
+        ? '<div class="big">🚚</div><p>Nenhum custo operacional salvo ainda.<br>Clique em <strong>💾 Salvar Operacionais</strong> (na aba Custos Operacionais) para registrar um aqui.</p>'
+        : '<div class="big">🔍</div><p>Nenhum registro encontrado com os filtros selecionados.</p>';
+      container.innerHTML = '<div class="lista-empty">' + msg + '</div>';
+      return;
+    }
+    let html = '<div class="rm-table-wrap"><table class="rm-table"><thead><tr>'
+      + '<th>Data</th><th>Empresa / Cliente</th><th>Job</th><th>Nº Pedido</th>'
+      + '<th>Local</th><th class="r">Total (R$)</th><th>Ações</th>'
+      + '</tr></thead><tbody>';
+    for (const e of lista) {
+      const local  = (e.cidade || '') + (e.estado ? ' / ' + e.estado : '');
+      const total  = (e.totalNum || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      const pedTag = e.pedido
+        ? '<span style="background:#e8edf8;color:var(--brand);border-radius:5px;padding:2px 7px;font-weight:700;">' + e.pedido + '</span>'
+        : '<span style="color:var(--muted);">—</span>';
+      const delKey = JSON.stringify(e._fbKey || e.id);
+      html += '<tr>'
+        + '<td style="white-space:nowrap;">' + (e.dataDisplay || e.dataSalvo.slice(0,10)) + '</td>'
+        + '<td class="td-empresa">' + (e.empresa || 'Cálculo avulso') + '</td>'
+        + '<td style="font-size:11px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (e.job || '—') + '</td>'
+        + '<td>' + pedTag + '</td>'
+        + '<td style="white-space:nowrap;">' + (local || '—') + '</td>'
+        + '<td class="td-total">R$ ' + total + '</td>'
+        + '<td class="td-acoes">'
+        + '<button class="btn-lista btn-lista-rm" onclick="gerarPdfOperacionalSalvo(' + e.id + ')">📄 Gerar PDF</button>'
+        + '<button class="btn-lista btn-lista-edit" onclick="editarOperacionalSalvo(' + delKey + ')" title="Carregar para edição">✏️ Carregar</button>'
+        + '<button class="btn-lista btn-lista-del" onclick="excluirOperacionalSalvo(' + delKey + ')" title="Excluir">🗑️</button>'
+        + '</td></tr>';
+    }
+    html += '</tbody></table></div>';
+    const totalFiltrado = lista.reduce((s, e) => s + (e.totalNum || 0), 0)
+      .toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    html += '<div style="margin-top:12px;text-align:right;font-size:12px;color:var(--muted);">'
+      + lista.length + ' registro(s) — Total filtrado: <strong style="color:var(--brand);">R$ ' + totalFiltrado + '</strong></div>';
+    container.innerHTML = html;
+  }
+
+  function limparFiltrosListaOperacionais() {
+    ['filtro-op-de','filtro-op-ate','filtro-op-pedido'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    renderListaOperacionais();
+  }
+
   function salvarOrcamento(btn) {
     if (itensOrcamento.length === 0) {
       alert('Adicione pelo menos um item antes de salvar.');
@@ -3801,6 +3978,44 @@
       }).catch(err => {
         alert('❌ Erro ao salvar na nuvem. Verifique sua conexão com a internet.');
         console.error('Firebase salvarRM error:', err);
+      });
+    } else {
+      alert('⚠️ Conexão com a nuvem não estabelecida. Verifique sua internet e recarregue a página.');
+    }
+  }
+
+  // ── Custos Operacionais — Salvar cálculo avulso (sem vínculo a orçamento) ──
+  function salvarOperacionais(btn) {
+    if (!opState.ultimoResultado || !opState.ultimoResultado.itens || !opState.ultimoResultado.itens.length) {
+      alert('Calcule os custos operacionais antes de salvar.');
+      return;
+    }
+    const entrada = {
+      id:           Date.now(),
+      dataSalvo:    new Date().toISOString(),
+      dataDisplay:  new Date().toLocaleDateString('pt-BR'),
+      empresa:      (document.getElementById('proj-empresa')?.value     || '').trim(),
+      solicitante:  (document.getElementById('proj-solicitante')?.value || '').trim(),
+      cidade:       (document.getElementById('proj-cidade')?.value      || '').trim(),
+      estado:       (document.getElementById('proj-estado')?.value      || '').trim(),
+      job:          (document.getElementById('proj-job')?.value         || '').trim(),
+      pedido:       (document.getElementById('proj-pedido')?.value      || '').trim(),
+      opInputs:     opColetarInputs(),
+      resultado:    JSON.parse(JSON.stringify(opState.ultimoResultado)),
+      totalNum:     opState.ultimoResultado.total || 0,
+    };
+    if (window._firebaseOpOk && window._fbSalvarOperacional) {
+      window._fbSalvarOperacional(entrada).then(() => {
+        atualizarBadgeListaOperacionais();
+        if (btn) {
+          const original = btn.textContent;
+          btn.textContent = '✅ Salvo!';
+          btn.style.background = 'var(--green)';
+          setTimeout(() => { btn.textContent = original; btn.style.background = ''; }, 1800);
+        }
+      }).catch(err => {
+        alert('❌ Erro ao salvar na nuvem. Verifique sua conexão com a internet.');
+        console.error('Firebase salvarOperacional error:', err);
       });
     } else {
       alert('⚠️ Conexão com a nuvem não estabelecida. Verifique sua internet e recarregue a página.');
@@ -3995,28 +4210,33 @@
   }
 
     function setView(view) {
-    const viewOrc    = document.querySelector('.container');
-    const viewLista  = document.getElementById('view-lista');
-    const viewOp     = document.getElementById('view-operacional');
-    const navOrc     = document.getElementById('nav-orcamento');
-    const navLista   = document.getElementById('nav-lista');
-    const navOp      = document.getElementById('nav-operacional');
-    const projHeader = document.getElementById('proj-header-wrap');
-    const catSel     = document.getElementById('cat-selector-wrap');
+    const viewOrc     = document.querySelector('.container');
+    const viewLista   = document.getElementById('view-lista');
+    const viewOp      = document.getElementById('view-operacional');
+    const viewListaOp = document.getElementById('view-lista-operacional');
+    const navOrc      = document.getElementById('nav-orcamento');
+    const navLista    = document.getElementById('nav-lista');
+    const navOp       = document.getElementById('nav-operacional');
+    const navListaOp  = document.getElementById('nav-lista-operacional');
+    const projHeader  = document.getElementById('proj-header-wrap');
+    const catSel      = document.getElementById('cat-selector-wrap');
     if (!viewOrc || !viewLista) return;
 
     viewOrc.style.display   = (view === 'orcamento') ? '' : 'none';
     viewLista.style.display = (view === 'lista')     ? 'block' : 'none';
-    if (viewOp) viewOp.style.display = (view === 'operacional') ? 'flex' : 'none';
+    if (viewOp)      viewOp.style.display      = (view === 'operacional')       ? 'flex'  : 'none';
+    if (viewListaOp) viewListaOp.style.display = (view === 'lista-operacional') ? 'block' : 'none';
 
-    if (projHeader) projHeader.style.display = (view === 'lista') ? 'none' : '';
+    if (projHeader) projHeader.style.display = (view === 'lista' || view === 'lista-operacional') ? 'none' : '';
     if (catSel)     catSel.style.display     = (view === 'orcamento') ? '' : 'none';
 
     navOrc.classList.toggle('active', view === 'orcamento');
     navLista.classList.toggle('active', view === 'lista');
-    if (navOp) navOp.classList.toggle('active', view === 'operacional');
+    if (navOp)      navOp.classList.toggle('active', view === 'operacional');
+    if (navListaOp) navListaOp.classList.toggle('active', view === 'lista-operacional');
 
     if (view === 'lista') renderListaRM();
+    if (view === 'lista-operacional') renderListaOperacionais();
     if (view === 'operacional') { opAtualizarVisibilidade(); opRenderResultado(); }
   }
 
@@ -4228,6 +4448,200 @@
     gerarRM(entry);
   }
 
+  // ── Custos Operacionais salvos — carregar / excluir / gerar PDF ─────────────
+
+  function excluirOperacionalSalvo(idOrKey) {
+    if (!confirm('Excluir este cálculo de custos operacionais? Esta ação não pode ser desfeita.')) return;
+    if (window._firebaseOpOk && window._fbExcluirOperacional && typeof idOrKey === 'string') {
+      window._fbExcluirOperacional(idOrKey);
+    } else {
+      alert('⚠️ Conexão com a nuvem não estabelecida. Não foi possível excluir.');
+    }
+  }
+
+  function editarOperacionalSalvo(fbKeyOrId) {
+    const entry = savedOperacionaisList.find(e => e._fbKey === fbKeyOrId || String(e.id) === String(fbKeyOrId));
+    if (!entry) { alert('Registro não encontrado.'); return; }
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+    set('proj-empresa',     entry.empresa);
+    set('proj-solicitante', entry.solicitante);
+    set('proj-cidade',      entry.cidade);
+    set('proj-estado',      entry.estado);
+    set('proj-job',         entry.job);
+    set('proj-pedido',      entry.pedido);
+
+    if (entry.opInputs) opRestaurarInputs(entry.opInputs);
+
+    const _cidOp  = document.getElementById('proj-cidade')?.value?.trim();
+    const _ufOp   = document.getElementById('proj-estado')?.value?.trim();
+    const _distOp = document.getElementById('op-distancia')?.value;
+    if (_cidOp && _ufOp && _distOp) {
+      _ultimaCidadeUFCalculada = _cidOp.toLowerCase() + '|' + _ufOp.toUpperCase();
+    }
+
+    calcularCustosOperacionais();
+    salvarProjeto();
+    setView('operacional');
+  }
+
+  function gerarPdfOperacionalSalvo(id) {
+    const entry = savedOperacionaisList.find(e => e.id === id);
+    if (!entry) { alert('Registro não encontrado.'); return; }
+    gerarPdfOperacionais(entry);
+  }
+
+  // ── Custos Operacionais — Gerar PDF (cálculo avulso, como uma orçamentação) ─
+  function gerarPdfOperacionais(dadosSalvos) {
+    const _d = dadosSalvos || null;
+    const resultado = _d ? _d.resultado : opState.ultimoResultado;
+    if (!resultado || !resultado.itens || !resultado.itens.length) {
+      alert('Calcule os custos operacionais antes de gerar o PDF.');
+      return;
+    }
+    if (typeof window.jspdf === 'undefined') {
+      alert('⚠️ Biblioteca de PDF ainda está carregando. Aguarde alguns segundos e tente novamente.');
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+
+    const empresa     = _d ? (_d.empresa     || '') : (document.getElementById('proj-empresa')?.value     || '').trim();
+    const solicitante = _d ? (_d.solicitante || '') : (document.getElementById('proj-solicitante')?.value || '').trim();
+    const cidade      = _d ? (_d.cidade      || '') : (document.getElementById('proj-cidade')?.value      || '').trim();
+    const estado      = _d ? (_d.estado      || '') : (document.getElementById('proj-estado')?.value      || '').trim();
+    const job         = _d ? (_d.job         || '') : (document.getElementById('proj-job')?.value         || '').trim();
+    const pedido      = _d ? (_d.pedido      || '') : (document.getElementById('proj-pedido')?.value      || '').trim();
+    const dataHoje    = _d ? (_d.dataDisplay || new Date(_d.dataSalvo).toLocaleDateString('pt-BR')) : new Date().toLocaleDateString('pt-BR');
+    const local       = cidade + (estado ? ' / ' + estado : '');
+
+    const NAVY  = [27,43,110];
+    const PINK  = [229,0,108];
+    const MUTED = [107,122,144];
+    const TEXT  = [30,42,56];
+
+    const doc   = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const mX    = 40;
+    let   y     = 0;
+
+    function fmtBRLpdf(v) {
+      return 'R$ ' + (v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function desenharHeader() {
+      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
+      doc.rect(0, 0, pageW, 66, 'F');
+      const logoImg = document.querySelector('header .logo-wrap img');
+      if (logoImg && logoImg.src) {
+        try { doc.addImage(logoImg.src, 'PNG', mX, 12, 110, 40); } catch (e) { /* ignora falha de logo */ }
+      }
+      doc.setTextColor(255,255,255);
+      doc.setFont(undefined, 'italic');
+      doc.setFontSize(9);
+      doc.text('COMUNICAÇÃO VISUAL', pageW - mX, 28, { align: 'right' });
+      doc.setFont(undefined, 'bold');
+      doc.setFontSize(13);
+      doc.text('RELATÓRIO DE CUSTOS OPERACIONAIS', pageW - mX, 48, { align: 'right' });
+      doc.setFillColor(PINK[0], PINK[1], PINK[2]);
+      doc.rect(0, 66, pageW, 4, 'F');
+      y = 96;
+    }
+    desenharHeader();
+
+    doc.setFontSize(9);
+    let yy = y;
+    const rotuloValor = (label, val, x, ySet) => {
+      doc.setFont(undefined, 'bold');   doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]); doc.text(label, x, ySet);
+      doc.setFont(undefined, 'normal'); doc.setTextColor(TEXT[0],TEXT[1],TEXT[2]); doc.text(String(val || '—'), x + 78, ySet);
+    };
+    rotuloValor('CLIENTE:',      empresa || 'Cálculo avulso (sem vínculo a orçamento)', mX, yy);
+    rotuloValor('SOLICITANTE:',  solicitante, mX, yy + 16);
+    rotuloValor('CIDADE / UF:',  local, mX, yy + 32);
+    const rX = pageW / 2 + 30;
+    rotuloValor('DATA:',        dataHoje, rX, yy);
+    rotuloValor('JOB:',         job, rX, yy + 16);
+    rotuloValor('Nº PEDIDO:',   pedido, rX, yy + 32);
+    y = yy + 54;
+
+    function desenharCabecalhoTabela() {
+      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
+      doc.rect(mX, y, pageW - 2*mX, 20, 'F');
+      doc.setTextColor(255,255,255);
+      doc.setFont(undefined, 'bold');
+      doc.setFontSize(9);
+      doc.text('DESCRIÇÃO', mX + 8, y + 14);
+      doc.text('VALOR (R$)', pageW - mX - 8, y + 14, { align: 'right' });
+      y += 20;
+    }
+    desenharCabecalhoTabela();
+
+    const larguraTexto = pageW - 2*mX - 140;
+    resultado.itens.forEach((it, idx) => {
+      const nomeLinhas    = doc.splitTextToSize((it.icon ? it.icon + '  ' : '') + (it.nome || ''), larguraTexto);
+      const detalheLinhas = doc.splitTextToSize(it.detalhe || '', larguraTexto);
+      const totalLinhas   = nomeLinhas.length + detalheLinhas.length;
+      const rowH          = 10 + totalLinhas * 11 + 6;
+
+      if (y + rowH > pageH - 70) { doc.addPage(); y = 40; desenharCabecalhoTabela(); }
+
+      if (idx % 2 === 1) {
+        doc.setFillColor(239, 242, 250);
+        doc.rect(mX, y, pageW - 2*mX, rowH, 'F');
+      }
+
+      doc.setFont(undefined, 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(TEXT[0], TEXT[1], TEXT[2]);
+      doc.text(nomeLinhas, mX + 8, y + 13);
+
+      doc.setFont(undefined, 'italic');
+      doc.setFontSize(8);
+      doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+      doc.text(detalheLinhas, mX + 8, y + 13 + nomeLinhas.length * 11);
+
+      doc.setFont(undefined, 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(TEXT[0], TEXT[1], TEXT[2]);
+      doc.text(fmtBRLpdf(it.valor), pageW - mX - 8, y + 13, { align: 'right' });
+
+      y += rowH;
+    });
+
+    if (y + 40 > pageH - 70) { doc.addPage(); y = 40; }
+    y += 8;
+    doc.setFillColor(PINK[0], PINK[1], PINK[2]);
+    doc.rect(mX, y, pageW - 2*mX, 26, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(11);
+    doc.text('TOTAL DE CUSTOS OPERACIONAIS', mX + 8, y + 17);
+    doc.text(fmtBRLpdf(resultado.total), pageW - mX - 8, y + 17, { align: 'right' });
+    y += 40;
+
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+    doc.text(
+      'Região: ' + (resultado.regiao || '—') + ' (índice ' + (resultado.indiceRegiao || 1) + '×)   |   '
+      + 'Prazo estim. frete dedicado: ' + (resultado.prazoDedicado || '—') + ' dia(s)   |   '
+      + 'Prazo estim. frete fracionado: ' + (resultado.prazoFracionado || '—') + ' dia(s)',
+      mX, y
+    );
+
+    const totalPaginas = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPaginas; p++) {
+      doc.setPage(p);
+      doc.setFontSize(8);
+      doc.setTextColor(MUTED[0], MUTED[1], MUTED[2]);
+      doc.text('Gerado em ' + new Date().toLocaleString('pt-BR') + ' — Granda Comunicação Visual', mX, pageH - 20);
+      doc.text('Página ' + p + ' / ' + totalPaginas, pageW - mX, pageH - 20, { align: 'right' });
+    }
+
+    const nomeArq = 'Custos_Operacionais_' + (empresa ? empresa.replace(/\s+/g, '_') : 'Avulso') + '_' + dataHoje.replace(/\//g, '-') + '.pdf';
+    doc.save(nomeArq);
+  }
+
   // ── Login ──────────────────────────────────────────────────────────────────
   const SENHA_ACESSO = 'granda2026';
 
@@ -4267,9 +4681,11 @@
     carregarPrecosLocal();
     carregarProjeto();
     carregarListaRM();
+    carregarListaOperacionais();
     atualizarArea();
     carregarPrecosGSheets(true);
     if (typeof opAtualizarVisibilidade === 'function') opAtualizarVisibilidade();
+    ajustarNavbarHeight();
   });
 
 </script>
