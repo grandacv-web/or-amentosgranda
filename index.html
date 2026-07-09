@@ -927,6 +927,69 @@
     letter-spacing: .3px;
   }
 
+
+  /* -- Custos Operacionais -- */
+  #view-operacional { max-width: 980px; margin: 20px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
+  .op-section { margin-bottom: 18px; }
+  .op-section:last-child { margin-bottom: 0; }
+  .op-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .op-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
+  .op-grid .form-group { margin-bottom: 0; }
+  .op-card select,
+  .op-card input[type="text"],
+  .op-card input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    background: #fafbfc;
+    -moz-appearance: textfield;
+  }
+  .op-card select:focus, .op-card input:focus { outline: none; border-color: var(--brand-light); background: #fff; }
+  .op-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .op-status { font-size: 11px; margin-top: 6px; color: var(--muted); }
+  .op-btn-mini {
+    background: #eaf0f8;
+    border: 1px solid var(--border);
+    color: var(--brand);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .op-btn-mini:hover { background: var(--brand); color: #fff; }
+  .op-elevacao-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; align-items: end; margin-bottom: 12px; }
+  .op-elevacao-row:last-child { margin-bottom: 0; }
+  .op-btn-calc {
+    width: 100%;
+    padding: 13px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: .3px;
+    margin-top: 6px;
+    transition: background .15s;
+  }
+  .op-btn-calc:hover { background: var(--brand-light); }
+
 </style>
 </head>
 <body>
@@ -968,6 +1031,9 @@
 <nav class="nav-bar">
   <button class="nav-tab active" onclick="setView('orcamento')" id="nav-orcamento">
     📐 Orçamento Atual
+  </button>
+  <button class="nav-tab" onclick="setView('operacional')" id="nav-operacional">
+    🚚 Custos Operacionais
   </button>
   <button class="nav-tab" onclick="setView('lista')" id="nav-lista">
     📋 Lista de RM
@@ -1430,6 +1496,30 @@
       <!-- Lista de itens adicionados -->
       <div id="itens-lista" style="display:none;">
         <div id="itens-container"></div>
+
+        <div class="op-card" style="margin-bottom:14px;padding:12px 14px;border:1.5px dashed var(--border);border-radius:10px;background:#f8fafc;">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">🚚 Instalação e Frete</div>
+          <div class="op-grid">
+            <div class="form-group">
+              <label>Instalação por nossa conta?</label>
+              <select id="orc-instalacao-conta" onchange="orcAtualizarCustosNoOrcamento(); salvarProjeto();">
+                <option value="NÃO">NÃO</option>
+                <option value="SIM">SIM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Frete por nossa conta?</label>
+              <select id="orc-frete-conta" onchange="orcAtualizarCustosNoOrcamento(); salvarProjeto();">
+                <option value="NÃO">NÃO</option>
+                <option value="SIM">SIM</option>
+              </select>
+            </div>
+          </div>
+          <div class="op-hint" style="margin-top:8px;">
+            Calculado automaticamente a partir da cidade/UF em "Dados do Projeto". Para ajustar detalhes (condição de instalação, tipo de caminhão, elevação etc.), use a aba 🚚 Custos Operacionais.
+          </div>
+        </div>
+
         <div id="total-geral" style="margin-bottom:16px;"></div>
       </div>
       <!-- Label prévia -->
@@ -1445,6 +1535,187 @@
   </div>
 
 </div><!-- /container -->
+
+<!-- ── Vista: Custos Operacionais ── -->
+<div id="view-operacional" style="display:none;">
+
+  <div class="card op-card">
+    <div class="card-header"><span class="icon">🚚</span> Custos Operacionais — Instalação, Frete e Mobilização</div>
+    <div class="card-body">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">
+        Calculado automaticamente a partir da cidade/UF informados em <strong>Dados do Projeto</strong> e das condições abaixo,
+        seguindo as regras da planilha de parâmetros de instalação. Origem fixa: <strong>Ponta Grossa/PR</strong>.
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">📍 Localização e Distância</div>
+        <div class="op-grid">
+          <div class="form-group">
+            <label>Cidade / UF do destino</label>
+            <input type="text" id="op-cidade-display" disabled style="background:#eef1f6;color:var(--muted);">
+          </div>
+          <div class="form-group">
+            <label>Distância (somente ida) <span style="font-weight:400;text-transform:none;">— km</span></label>
+            <input type="number" id="op-distancia" min="0" step="1" oninput="calcularCustosOperacionais()">
+          </div>
+          <div class="form-group">
+            <button type="button" class="op-btn-mini" onclick="opCalcularDistanciaAuto()">🔄 Forçar novo cálculo de distância</button>
+          </div>
+        </div>
+        <div class="op-status" id="op-distancia-status">Calculado automaticamente assim que cidade e UF forem preenchidos em "Dados do Projeto". Use o botão só para recalcular manualmente.</div>
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">💰 Condições Comerciais</div>
+        <div class="op-grid">
+          <div class="form-group">
+            <label>Valor do pedido (venda) <span style="font-weight:400;text-transform:none;">— R$</span></label>
+            <input type="number" id="op-valor-pedido" min="0" step="100" oninput="calcularCustosOperacionais()">
+          </div>
+          <div class="form-group">
+            <button type="button" class="op-btn-mini" onclick="opUsarTotalComoValorPedido()">🔄 Usar total de materiais do orçamento</button>
+          </div>
+          <div class="form-group">
+            <label>Condição de instalação</label>
+            <select id="op-condicao-instalacao" onchange="calcularCustosOperacionais()">
+              <option>INSTALAÇÃO NORMAL</option>
+              <option>INSTALAÇÃO NOTURNA</option>
+              <option>INSTALAÇÃO NOTURNA SHOPPING</option>
+              <option>INSTALAÇÃO NOTURNA AEROPORTO</option>
+              <option>TRABALHOS ESPECÍFICOS - MÃO DE OBRA DIFERENCIADA</option>
+              <option>INSTALAÇÃO INDÚSTRIA</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de caminhão</label>
+            <select id="op-tipo-caminhao" onchange="opAtualizarVisibilidade();calcularCustosOperacionais()">
+              <option value="TRUCK">TRUCK</option>
+              <option value="VAN">VAN</option>
+              <option value="CARRETA">CARRETA</option>
+              <option value="FRACIONADO">FRACIONADO</option>
+            </select>
+          </div>
+          <div class="form-group" id="op-wrap-fracionado" style="display:none;">
+            <label>Valor do frete fracionado (cotação) <span style="font-weight:400;text-transform:none;">— R$</span></label>
+            <input type="number" id="op-valor-fracionado" min="0" step="10" oninput="calcularCustosOperacionais()">
+          </div>
+        </div>
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">✈️ Deslocamento de Equipe</div>
+        <div class="op-hint" style="margin-bottom:10px;">Use passagem aérea normalmente para distâncias acima de 2.000km.</div>
+        <div class="op-grid">
+          <div class="form-group">
+            <label>Passagem aérea</label>
+            <select id="op-passagem-aerea" onchange="opAtualizarVisibilidade();calcularCustosOperacionais()">
+              <option value="NÃO">NÃO</option>
+              <option value="SIM">SIM</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Dias de instalação</label>
+            <input type="number" id="op-dias-instalacao" min="0" step="1" oninput="calcularCustosOperacionais()">
+          </div>
+          <div class="form-group" id="op-wrap-aluguel" style="display:none;">
+            <label>Aluguel de carro</label>
+            <select id="op-aluguel-carro" onchange="calcularCustosOperacionais()">
+              <option value="NÃO">NÃO</option>
+              <option value="SIM">SIM</option>
+            </select>
+          </div>
+          <div class="form-group" id="op-wrap-aeroporto" style="display:none;">
+            <label>Km cidade → aeroporto</label>
+            <input type="number" id="op-km-aeroporto" min="0" step="1" oninput="calcularCustosOperacionais()">
+          </div>
+        </div>
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">🏗️ Elevação (Munck, Guindaste, Andaime...)</div>
+        <div class="op-elevacao-row">
+          <div class="form-group">
+            <label>Tipo de elevação 1</label>
+            <select id="op-elevacao-tipo-1" onchange="opAtualizarVisibilidade();calcularCustosOperacionais()">
+              <option>NENHUM</option><option>MUNQUE</option><option>GUINDASTE</option>
+              <option>ANDAIME (POR METRO)</option><option>MUNQUE NOTURNO</option>
+              <option>GUINDASTE NOTURNO</option><option>PTA</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Quantidade</label>
+            <input type="number" id="op-elevacao-qtd-1" min="0" step="1" oninput="calcularCustosOperacionais()"></div>
+          <div class="form-group" id="op-wrap-pta-1" style="display:none;"><label>Valor PTA (R$)</label>
+            <input type="number" id="op-elevacao-pta-1" min="0" step="10" oninput="calcularCustosOperacionais()"></div>
+        </div>
+        <div class="op-elevacao-row">
+          <div class="form-group">
+            <label>Tipo de elevação 2</label>
+            <select id="op-elevacao-tipo-2" onchange="opAtualizarVisibilidade();calcularCustosOperacionais()">
+              <option>NENHUM</option><option>MUNQUE</option><option>GUINDASTE</option>
+              <option>ANDAIME (POR METRO)</option><option>MUNQUE NOTURNO</option>
+              <option>GUINDASTE NOTURNO</option><option>PTA</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Quantidade</label>
+            <input type="number" id="op-elevacao-qtd-2" min="0" step="1" oninput="calcularCustosOperacionais()"></div>
+          <div class="form-group" id="op-wrap-pta-2" style="display:none;"><label>Valor PTA (R$)</label>
+            <input type="number" id="op-elevacao-pta-2" min="0" step="10" oninput="calcularCustosOperacionais()"></div>
+        </div>
+        <div class="op-elevacao-row">
+          <div class="form-group">
+            <label>Tipo de elevação 3</label>
+            <select id="op-elevacao-tipo-3" onchange="opAtualizarVisibilidade();calcularCustosOperacionais()">
+              <option>NENHUM</option><option>MUNQUE</option><option>GUINDASTE</option>
+              <option>ANDAIME (POR METRO)</option><option>MUNQUE NOTURNO</option>
+              <option>GUINDASTE NOTURNO</option><option>PTA</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Quantidade</label>
+            <input type="number" id="op-elevacao-qtd-3" min="0" step="1" oninput="calcularCustosOperacionais()"></div>
+          <div class="form-group" id="op-wrap-pta-3" style="display:none;"><label>Valor PTA (R$)</label>
+            <input type="number" id="op-elevacao-pta-3" min="0" step="10" oninput="calcularCustosOperacionais()"></div>
+        </div>
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">🔲 Revestimento em ACM (instalação)</div>
+        <div class="op-grid">
+          <div class="form-group">
+            <label>Área de ACM <span style="font-weight:400;text-transform:none;">— m²</span></label>
+            <input type="number" id="op-m2-acm" min="0" step="0.1" oninput="calcularCustosOperacionais()">
+          </div>
+          <div class="form-group">
+            <button type="button" class="op-btn-mini" onclick="opEstimarM2ACM()">🔄 Somar m² de ACM já usados no orçamento</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="op-section">
+        <div class="op-section-title">🧾 Serviços Extras</div>
+        <div class="op-grid">
+          <div class="form-group"><label>Plano de Rigging</label>
+            <select id="op-plano-rigging" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+          <div class="form-group"><label>ART</label>
+            <select id="op-art" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+          <div class="form-group"><label>Remoção de placa</label>
+            <select id="op-remocao-placa" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+          <div class="form-group"><label>Seguro de obra</label>
+            <select id="op-seguro-obra" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
+        </div>
+      </div>
+
+      <button type="button" class="op-btn-calc" onclick="calcularCustosOperacionais()">🧮 Recalcular Custos Operacionais</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="icon">📊</span> Resultado — Custos Operacionais</div>
+    <div class="card-body" id="op-resultado">
+      <div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>
+    </div>
+  </div>
+
+</div>
 
 <!-- ── Vista: Lista de RM ── -->
 <div id="view-lista">
@@ -1485,6 +1756,415 @@
   let proximoId = 1;
   let _editandoFbKey = null; // quando não-nulo, estamos editando uma RM já salva
   let _lastItems = []; // snapshot dos itens do último calcular()
+
+  // ══════════════════════════════════════════════════════════════════════
+  // CUSTOS OPERACIONAIS — Instalação, Frete e Mobilização
+  // Fiel à planilha "PARAMETROS 2026 - INSTALAÇÃO.xlsx" (abas TELA INICIAL,
+  // PAG2, FRETE e CADASTROS). Origem fixa de frete/mobilização: Ponta Grossa/PR.
+  // ══════════════════════════════════════════════════════════════════════
+  const OP_ORIGEM = { cidade: 'Ponta Grossa', uf: 'PR' };
+
+  const OP_REGIAO_POR_UF = {
+    AC:'NORTE', AP:'NORTE', AM:'NORTE', PA:'NORTE', RO:'NORTE', RR:'NORTE', TO:'NORTE',
+    AL:'NORDESTE', BA:'NORDESTE', CE:'NORDESTE', MA:'NORDESTE', PB:'NORDESTE', PE:'NORDESTE',
+    PI:'NORDESTE', RN:'NORDESTE', SE:'NORDESTE',
+    DF:'CENTRO OESTE', GO:'CENTRO OESTE', MT:'CENTRO OESTE', MS:'CENTRO OESTE',
+    ES:'SUDESTE', MG:'SUDESTE', RJ:'SUDESTE', SP:'SUDESTE',
+    PR:'SUL', RS:'SUL', SC:'SUL',
+  };
+  const OP_INDICE_REGIAO = { 'SUL':1, 'SUDESTE':1, 'CENTRO OESTE':1.2, 'NORTE':1.4, 'NORDESTE':1.2 };
+
+  const OP_INDICE_CAMINHAO = { 'TRUCK':1, 'VAN':0.75, 'CARRETA':1.25, 'FRACIONADO':0 };
+  const OP_PRAZO_CAMINHAO_KM_DIA = { 'TRUCK':550, 'CARRETA':480, 'VAN':650 };
+
+  const OP_CONDICOES_INSTALACAO = [
+    { nome:'INSTALAÇÃO NORMAL', taxa:0 },
+    { nome:'INSTALAÇÃO NOTURNA', taxa:0.2 },
+    { nome:'INSTALAÇÃO NOTURNA SHOPPING', taxa:0.3 },
+    { nome:'INSTALAÇÃO NOTURNA AEROPORTO', taxa:0.4 },
+    { nome:'TRABALHOS ESPECÍFICOS - MÃO DE OBRA DIFERENCIADA', taxa:0.5 },
+    { nome:'INSTALAÇÃO INDÚSTRIA', taxa:1.0 },
+  ];
+
+  const OP_ELEVACOES = [
+    { nome:'NENHUM',              custo:0,    indice:0,   cobrar:0    },
+    { nome:'MUNQUE',              custo:3500, indice:0.3, cobrar:4550 },
+    { nome:'GUINDASTE',           custo:4500, indice:0.3, cobrar:5850 },
+    { nome:'ANDAIME (POR METRO)', custo:80,   indice:0.3, cobrar:104  },
+    { nome:'MUNQUE NOTURNO',      custo:4000, indice:0.3, cobrar:5200 },
+    { nome:'GUINDASTE NOTURNO',   custo:5500, indice:0.3, cobrar:7150 },
+  ];
+
+  // Bracket "Valor do pedido" → "Valor comercial a cobrar" pela instalação (PAG2!B4:D38)
+  const OP_TABELA_INSTALACAO = [
+    [1000,2500],[2000,2500],[3000,2500],[4000,2500],[5000,2500],[10000,2500],[20000,2500],
+    [30000,2550],[40000,3600],[50000,4000],[60000,5400],[70000,6300],[80000,7200],[90000,8100],
+    [100000,9000],[110000,8272],[120000,8928],[130000,9568],[140000,10192],[150000,10800],
+    [160000,11392],[170000,11968],[180000,12528],[190000,13072],[200000,13600],[210000,14112],
+    [220000,14608],[230000,15088],[240000,15552],[250000,16000],[260000,16432],[270000,16848],
+    [280000,17248],[290000,17632],[300000,18000],
+  ];
+
+  // Tabela de frete nacional por faixa de KM → valor a cobrar do cliente, caminhão TRUCK (FRETE!C5:H49)
+  const OP_TABELA_FRETE_KM = [
+    [100,2040],[200,3840],[300,4320],[400,5280],[500,6600],[600,7920],[700,9240],[800,10560],
+    [900,10800],[1000,12000],[1100,13200],[1200,14400],[1300,15600],[1400,16800],[1500,18000],
+    [1600,19200],[1700,20400],[1800,21600],[1900,22800],[2000,24000],[2100,25200],[2200,26400],
+    [2300,27600],[2400,28800],[2500,30000],[2600,31200],[2700,32400],[2800,33600],[2900,34800],
+    [3000,36000],[3100,37200],[3200,38400],[3300,39600],[3400,40800],[3500,42000],[3600,43200],
+    [3700,44400],[3800,45600],[3900,46800],[4000,48000],[4100,49200],[4200,50400],[4300,51600],
+    [4400,52800],[4500,54000],
+  ];
+
+  // Prazo estimado de frete fracionado por KM (CADASTROS!H2:I25) — apenas informativo
+  const OP_PRAZO_FRACIONADO_KM = [
+    [0,2],[200,3],[400,3.5],[600,4],[800,4.5],[1000,5],[1200,5.5],[1400,6],[1600,6.5],[1800,7],
+    [2000,7.5],[2200,8],[2400,8.5],[2600,9],[2800,9.5],[3000,10],[3200,10.5],[3400,11],[3600,11.5],
+    [3800,12],[4000,12.5],[4200,13],[4400,13.5],[4600,14],
+  ];
+
+  const OP_VALOR_KM_MOBILIZACAO     = 2;    // R$/km (CADASTROS!C9)
+  const OP_PLANO_RIGGING            = 3800; // CADASTROS!C19
+  const OP_ART_PERC                 = 0.02; // CADASTROS!C27 — 2% do valor do pedido
+  const OP_SEGURO_OBRA              = 4500; // CADASTROS!C31
+  const OP_PASSAGEM_AEREA_BASE      = 7000; // CADASTROS!C35
+  const OP_ALUGUEL_CARRO_DIARIA     = 250;  // CADASTROS!C39
+  const OP_VALOR_M2_ACM_INSTALACAO  = 250;  // PAG2!H24
+  const OP_REMOCAO_PLACA_PERC       = 0.6;  // (Instalação + Cond. Extras) × 60% — só quando marcado SIM
+
+  const OP_CAMPOS_IDS = [
+    'op-distancia','op-valor-pedido','op-condicao-instalacao','op-tipo-caminhao','op-valor-fracionado',
+    'op-passagem-aerea','op-dias-instalacao','op-aluguel-carro','op-km-aeroporto','op-m2-acm',
+    'op-plano-rigging','op-art','op-remocao-placa','op-seguro-obra',
+    'op-elevacao-tipo-1','op-elevacao-qtd-1','op-elevacao-pta-1',
+    'op-elevacao-tipo-2','op-elevacao-qtd-2','op-elevacao-pta-2',
+    'op-elevacao-tipo-3','op-elevacao-qtd-3','op-elevacao-pta-3',
+    'orc-instalacao-conta','orc-frete-conta',
+  ];
+
+  let opState = {
+    ultimoResultado: null, // { itens, total, regiao, indiceRegiao, prazoDedicado, prazoFracionado }
+  };
+
+  function opGetInput(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+  function opGetNum(id)   { return parseFloat(opGetInput(id)) || 0; }
+  function opGetSimNao(id){ return (opGetInput(id) || 'NÃO').toUpperCase() === 'SIM'; }
+  function opRegiaoPorUF(uf) { return OP_REGIAO_POR_UF[(uf || '').toUpperCase()] || null; }
+  function opBuscarElevacao(nome) { return OP_ELEVACOES.find(e => e.nome === nome) || OP_ELEVACOES[0]; }
+
+  function opBracket(tabela, valor) {
+    if (!tabela.length || valor <= 0) return 0;
+    if (valor <= tabela[0][0]) return tabela[0][1];
+    for (const par of tabela) {
+      if (valor <= par[0]) return par[1];
+    }
+    const ultimo = tabela[tabela.length - 1];
+    return ultimo[1] * (valor / ultimo[0]);
+  }
+
+  function opFloorLookup(tabela, valor) {
+    let melhor = tabela[0][1];
+    for (const par of tabela) {
+      if (valor >= par[0]) melhor = par[1]; else break;
+    }
+    return melhor;
+  }
+
+  function opColetarInputs() {
+    const dados = {};
+    OP_CAMPOS_IDS.forEach(id => { const el = document.getElementById(id); if (el) dados[id] = el.value; });
+    return dados;
+  }
+  function opRestaurarInputs(dados) {
+    if (!dados) return;
+    OP_CAMPOS_IDS.forEach(id => { const el = document.getElementById(id); if (el && dados[id] !== undefined) el.value = dados[id]; });
+    opAtualizarVisibilidade();
+  }
+  function opLimparCampos() {
+    OP_CAMPOS_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
+    });
+    opState.ultimoResultado = null;
+    opAtualizarVisibilidade();
+    opRenderResultado();
+  }
+
+  function opAtualizarVisibilidade() {
+    const fracionado = opGetInput('op-tipo-caminhao') === 'FRACIONADO';
+    const elFrac = document.getElementById('op-wrap-fracionado');
+    if (elFrac) elFrac.style.display = fracionado ? '' : 'none';
+
+    const aereo = opGetSimNao('op-passagem-aerea');
+    const elAlug = document.getElementById('op-wrap-aluguel');
+    const elAero = document.getElementById('op-wrap-aeroporto');
+    if (elAlug) elAlug.style.display = aereo ? '' : 'none';
+    if (elAero) elAero.style.display = aereo ? '' : 'none';
+
+    [1,2,3].forEach(n => {
+      const tipo = opGetInput('op-elevacao-tipo-' + n);
+      const elPta = document.getElementById('op-wrap-pta-' + n);
+      if (elPta) elPta.style.display = (tipo === 'PTA') ? '' : 'none';
+    });
+
+    const cid = document.getElementById('proj-cidade')?.value || '';
+    const uf  = document.getElementById('proj-estado')?.value || '';
+    const disp = document.getElementById('op-cidade-display');
+    if (disp) disp.value = (cid || uf) ? (cid + (uf ? ' / ' + uf : '')) : '';
+  }
+
+  async function opGeocodificar(cidade, uf) {
+    if (!cidade || !uf) return null;
+    const key = cidade.trim().toLowerCase() + '|' + uf.trim().toUpperCase();
+    let cache = {};
+    try { cache = JSON.parse(localStorage.getItem('granda_geocode_cache') || '{}'); } catch(e) {}
+    if (cache[key]) return cache[key];
+
+    const q   = encodeURIComponent(cidade + ', ' + uf + ', Brasil');
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=' + q;
+    const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' ao geocodificar');
+    const data = await resp.json();
+    if (!data || !data.length) throw new Error('cidade "' + cidade + '/' + uf + '" não encontrada');
+
+    const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    cache[key] = coords;
+    try { localStorage.setItem('granda_geocode_cache', JSON.stringify(cache)); } catch(e) {}
+    return coords;
+  }
+
+  async function opCalcularDistanciaAuto() {
+    const cidade = document.getElementById('proj-cidade')?.value?.trim();
+    const uf     = document.getElementById('proj-estado')?.value?.trim();
+    const status = document.getElementById('op-distancia-status');
+    const input  = document.getElementById('op-distancia');
+
+    if (!cidade || !uf) {
+      if (status) status.innerHTML = '⚠️ Informe cidade e estado em "Dados do Projeto" (acima) para calcular automaticamente.';
+      return;
+    }
+    if (status) status.innerHTML = '🔄 Calculando distância rodoviária (Ponta Grossa/PR → ' + cidade + '/' + uf + ')...';
+
+    try {
+      const origem  = await opGeocodificar(OP_ORIGEM.cidade, OP_ORIGEM.uf);
+      const destino = await opGeocodificar(cidade, uf);
+      const url = 'https://router.project-osrm.org/route/v1/driving/'
+                + origem.lon + ',' + origem.lat + ';' + destino.lon + ',' + destino.lat
+                + '?overview=false';
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status + ' ao calcular rota');
+      const data = await resp.json();
+      if (data.code !== 'Ok' || !data.routes || !data.routes.length) throw new Error('rota não encontrada');
+
+      const km = Math.round(data.routes[0].distance / 1000);
+      if (input) input.value = km;
+      if (status) status.innerHTML = '✅ ' + km + ' km calculados via rota rodoviária real (Ponta Grossa/PR → ' + cidade + '/' + uf + ').';
+      calcularCustosOperacionais();
+      salvarProjeto();
+    } catch (err) {
+      console.warn('Erro no cálculo automático de distância:', err);
+      if (status) status.innerHTML = '⚠️ Não foi possível calcular automaticamente (' + err.message + '). Informe a distância manualmente ao lado.';
+    }
+  }
+
+  // Dispara o cálculo automático de distância assim que cidade + UF estiverem preenchidos,
+  // sem precisar clicar em nenhum botão. Usa debounce para não bater na API a cada tecla.
+  let _ultimaCidadeUFCalculada = null;
+  let _projGeoTimer = null;
+
+  function agendarCalculoAutoDistancia() {
+    clearTimeout(_projGeoTimer);
+    _projGeoTimer = setTimeout(calcularDistanciaAutoSeNecessario, 800);
+  }
+
+  async function calcularDistanciaAutoSeNecessario() {
+    const cidade = document.getElementById('proj-cidade')?.value?.trim();
+    const uf     = document.getElementById('proj-estado')?.value?.trim();
+    if (!cidade || !uf) return;
+    const key = cidade.toLowerCase() + '|' + uf.toUpperCase();
+    if (key === _ultimaCidadeUFCalculada) return; // já calculado para este destino
+
+    const distanciaEl = document.getElementById('op-distancia');
+    if (distanciaEl) distanciaEl.value = ''; // destino mudou — descarta km do destino anterior
+    _ultimaCidadeUFCalculada = key;
+
+    await opCalcularDistanciaAuto();
+    orcAtualizarCustosNoOrcamento();
+  }
+
+  function opUsarTotalComoValorPedido() {
+    const el = document.getElementById('op-valor-pedido');
+    if (el) el.value = calcularTotalGeralNum().toFixed(2);
+    calcularCustosOperacionais();
+  }
+
+  function opEstimarM2ACM() {
+    let total = 0;
+    itensOrcamento.forEach(item => {
+      if (item.categoria === 'fachadas' || item.usaACM) {
+        total += (item.largura || 0) * (item.alturaVal || 0);
+      }
+    });
+    const el = document.getElementById('op-m2-acm');
+    if (el) el.value = total.toFixed(2);
+    calcularCustosOperacionais();
+  }
+
+  function calcularCustosOperacionais() {
+    const uf     = (document.getElementById('proj-estado')?.value || '').trim().toUpperCase();
+    const regiao = opRegiaoPorUF(uf);
+    const indiceRegiao = regiao ? (OP_INDICE_REGIAO[regiao] || 1) : 1;
+
+    const distanciaKm  = opGetNum('op-distancia');
+    const valorPedido  = opGetNum('op-valor-pedido');
+    const condInst     = OP_CONDICOES_INSTALACAO.find(c => c.nome === opGetInput('op-condicao-instalacao')) || OP_CONDICOES_INSTALACAO[0];
+    const tipoCaminhao = opGetInput('op-tipo-caminhao') || 'TRUCK';
+    const valorFracionadoManual = opGetNum('op-valor-fracionado');
+
+    const passagemAerea  = opGetSimNao('op-passagem-aerea');
+    const diasInstalacao = opGetNum('op-dias-instalacao');
+    const aluguelCarro    = opGetSimNao('op-aluguel-carro');
+    const kmAeroporto     = opGetNum('op-km-aeroporto');
+
+    const m2ACM = opGetNum('op-m2-acm');
+
+    const planoRigging = opGetSimNao('op-plano-rigging');
+    const art           = opGetSimNao('op-art');
+    const remocaoPlaca   = opGetSimNao('op-remocao-placa');
+    const seguroObra     = opGetSimNao('op-seguro-obra');
+
+    const itens = [];
+    function add(icon, nome, detalhe, valor, categoria) {
+      if (!(valor > 0)) return;
+      itens.push({ icon, nome, detalhe, valor: arred(valor, 2), categoria: categoria || 'instalacao' });
+    }
+
+    const baseInstalacao = valorPedido > 0 ? opBracket(OP_TABELA_INSTALACAO, valorPedido) : 0;
+    const valorACMInstalacao = m2ACM * OP_VALOR_M2_ACM_INSTALACAO;
+    const valorInstalacao = (baseInstalacao * indiceRegiao) + valorACMInstalacao;
+    add('🛠️', 'Valor de Instalação',
+      'Pedido ' + fmtBRL(valorPedido) + ' → base ' + fmtBRL(baseInstalacao) + ' × índice região ' + (regiao || '—') + ' (' + indiceRegiao + '×)'
+      + (m2ACM > 0 ? ' + ' + m2ACM.toFixed(2) + 'm² ACM × ' + fmtBRL(OP_VALOR_M2_ACM_INSTALACAO) : ''),
+      valorInstalacao);
+
+    const condicoesExtras = valorInstalacao * condInst.taxa;
+    add('🌙', 'Condições Extras — ' + condInst.nome, (condInst.taxa*100).toFixed(0) + '% sobre o valor de instalação', condicoesExtras);
+
+    let mobilizacaoRodoviaria = 0, mobilizacaoAerea = 0;
+    if (!passagemAerea) {
+      mobilizacaoRodoviaria = distanciaKm * OP_VALOR_KM_MOBILIZACAO * 2;
+      add('🚐', 'Mobilização Rodoviária', distanciaKm + 'km × ' + fmtBRL(OP_VALOR_KM_MOBILIZACAO) + '/km × 2 (ida e volta)', mobilizacaoRodoviaria);
+    } else {
+      mobilizacaoAerea = OP_PASSAGEM_AEREA_BASE
+        + (aluguelCarro ? diasInstalacao * OP_ALUGUEL_CARRO_DIARIA : 0)
+        + (kmAeroporto * OP_VALOR_KM_MOBILIZACAO);
+      add('✈️', 'Mobilização Aérea',
+        'Passagem ' + fmtBRL(OP_PASSAGEM_AEREA_BASE)
+        + (aluguelCarro ? ' + aluguel de carro ' + diasInstalacao + 'd × ' + fmtBRL(OP_ALUGUEL_CARRO_DIARIA) : '')
+        + (kmAeroporto > 0 ? ' + deslocamento ' + kmAeroporto + 'km × ' + fmtBRL(OP_VALOR_KM_MOBILIZACAO) : ''),
+        mobilizacaoAerea);
+    }
+
+    let frete = 0;
+    if (tipoCaminhao === 'FRACIONADO') {
+      frete = valorFracionadoManual;
+      add('📦', 'Frete Fracionado', 'Valor de cotação informado manualmente', frete, 'frete');
+    } else {
+      const indiceCam = OP_INDICE_CAMINHAO[tipoCaminhao] ?? 1;
+      const baseFrete = distanciaKm > 0 ? opBracket(OP_TABELA_FRETE_KM, distanciaKm) : 0;
+      frete = baseFrete * indiceCam;
+      add('🚛', 'Frete — ' + tipoCaminhao, distanciaKm + 'km → base ' + fmtBRL(baseFrete) + ' × índice ' + tipoCaminhao + ' (' + indiceCam + '×)', frete, 'frete');
+    }
+
+    let elevacaoTotal = 0;
+    for (let i = 1; i <= 3; i++) {
+      const tipoEl = opGetInput('op-elevacao-tipo-' + i);
+      const qtdEl  = opGetNum('op-elevacao-qtd-' + i);
+      if (!tipoEl || tipoEl === 'NENHUM' || qtdEl <= 0) continue;
+      if (tipoEl === 'PTA') {
+        const valorPTA = opGetNum('op-elevacao-pta-' + i);
+        elevacaoTotal += valorPTA;
+        add('🏗️', 'Elevação — PTA', 'Valor a orçar, informado manualmente (qtd. ' + qtdEl + ')', valorPTA);
+      } else {
+        const el = opBuscarElevacao(tipoEl);
+        const custoEl = qtdEl * el.cobrar;
+        elevacaoTotal += custoEl;
+        add('🏗️', 'Elevação — ' + tipoEl, qtdEl + '× ' + fmtBRL(el.cobrar) + ' (custo ' + fmtBRL(el.custo) + ' + índice ' + (el.indice*100).toFixed(0) + '%)', custoEl);
+      }
+    }
+
+    const valorRigging = planoRigging ? OP_PLANO_RIGGING : 0;
+    add('🪢', 'Plano de Rigging', 'Serviço adicional de rigging', valorRigging);
+
+    const valorART = art ? valorPedido * OP_ART_PERC : 0;
+    add('📋', 'ART', (OP_ART_PERC*100).toFixed(0) + '% sobre o valor do pedido', valorART);
+
+    const valorRemocaoPlaca = remocaoPlaca ? (valorInstalacao + condicoesExtras) * OP_REMOCAO_PLACA_PERC : 0;
+    add('🪧', 'Remoção de Placa', (OP_REMOCAO_PLACA_PERC*100).toFixed(0) + '% sobre (instalação + condições extras)', valorRemocaoPlaca);
+
+    const valorSeguro = seguroObra ? OP_SEGURO_OBRA : 0;
+    add('🛡️', 'Seguro de Obra', 'Valor fixo', valorSeguro);
+
+    const total = valorInstalacao + condicoesExtras + mobilizacaoRodoviaria + mobilizacaoAerea
+                + frete + elevacaoTotal + valorRigging + valorART + valorRemocaoPlaca + valorSeguro;
+
+    const prazoFracionado = distanciaKm > 0 ? opFloorLookup(OP_PRAZO_FRACIONADO_KM, distanciaKm) : 0;
+    let prazoDedicado = distanciaKm > 0 ? 1 : 0;
+    if (distanciaKm > 0 && tipoCaminhao !== 'FRACIONADO' && OP_PRAZO_CAMINHAO_KM_DIA[tipoCaminhao]) {
+      prazoDedicado = Math.ceil(distanciaKm / OP_PRAZO_CAMINHAO_KM_DIA[tipoCaminhao]);
+    }
+
+    // Separa o total em "Instalação" (tudo, exceto frete) e "Frete", para permitir marcar
+    // cada um independentemente como "por nossa conta" no Orçamento.
+    const totalArredOp   = arred(total, 2);
+    const totalFrete      = arred(itens.filter(it => it.categoria === 'frete').reduce((s, it) => s + it.valor, 0), 2);
+    const totalInstalacao = arred(totalArredOp - totalFrete, 2);
+
+    opState.ultimoResultado = { itens, total: totalArredOp, totalInstalacao, totalFrete, regiao, indiceRegiao, prazoFracionado, prazoDedicado };
+    opRenderResultado();
+    renderItens();
+    salvarProjeto();
+    return opState.ultimoResultado;
+  }
+
+  function opRenderResultado() {
+    const container = document.getElementById('op-resultado');
+    if (!container) return;
+    const r = opState.ultimoResultado;
+    if (!r || !r.itens.length) {
+      container.innerHTML = '<div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>';
+      return;
+    }
+    const itensHTML = r.itens.map(it => `
+      <div class="material-item">
+        <div class="mat-icon">${it.icon}</div>
+        <div class="mat-info">
+          <div class="mat-name">${escHtml(it.nome)}</div>
+          <div class="mat-detail">${escHtml(it.detalhe)}</div>
+        </div>
+        <div class="mat-cost">
+          <div class="val">${fmtBRL(it.valor)}</div>
+        </div>
+      </div>
+    `).join('');
+    container.innerHTML = `
+      <div class="material-list">${itensHTML}</div>
+      <div class="total-box">
+        <div>
+          <div class="label">Total de Custos Operacionais</div>
+          <div style="font-size:11px;opacity:.7;margin-top:2px;">Instalação, frete, mobilização e extras</div>
+        </div>
+        <div class="value">${fmtBRL(r.total)}</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:18px;flex-wrap:wrap;">
+        <span>📍 Região: <strong>${r.regiao || '—'}</strong> (índice ${r.indiceRegiao}×)</span>
+        <span>🕒 Prazo estim. frete dedicado: <strong>${r.prazoDedicado || '—'} dia(s)</strong></span>
+        <span>🕒 Prazo estim. frete fracionado: <strong>${r.prazoFracionado || '—'} dia(s)</strong></span>
+      </div>
+    `;
+  }
 
   // ── Frente Adesivada ───────────────────────────────────────────────────────
   let _adesivadaOpen = false;
@@ -2246,7 +2926,7 @@
 
     itensOrcamento.push(item);
     _orcSalvo = false;
-    renderItens();
+    orcAtualizarCustosNoOrcamento();
     salvarProjeto();
 
     // Reseta formulário para próximo item
@@ -2278,7 +2958,7 @@
   function removeItem(id) {
     itensOrcamento = itensOrcamento.filter(i => i.id !== id);
     _orcSalvo = false;
-    renderItens();
+    orcAtualizarCustosNoOrcamento();
     salvarProjeto();
   }
 
@@ -2310,6 +2990,7 @@
   function _limparOrcamento() {
     itensOrcamento = [];
     _orcSalvo = true;
+    _ultimaCidadeUFCalculada = null;
     // Reseta adesivos
     adesivosForm = [];
     _adesivadaOpen = false;
@@ -2328,6 +3009,9 @@
     });
     const est = document.getElementById('proj-estado');
     if (est) est.value = '';
+
+    // Limpa campos de Custos Operacionais
+    if (typeof opLimparCampos === 'function') opLimparCampos();
 
     // Limpa campos de fachadas
     ['fach-nome-item','fach-largura','fach-altura'].forEach(id => {
@@ -2403,13 +3087,30 @@
       </div>
     `).join('');
 
+    const _totalMateriaisRI   = calcularTotalGeralNum();
+    const _instalacaoPorConta = (document.getElementById('orc-instalacao-conta')?.value || 'NÃO') === 'SIM';
+    const _fretePorConta      = (document.getElementById('orc-frete-conta')?.value      || 'NÃO') === 'SIM';
+    const _opResultadoRI      = opState.ultimoResultado;
+    const _valorInstalacaoRI  = (_instalacaoPorConta && _opResultadoRI) ? _opResultadoRI.totalInstalacao : 0;
+    const _valorFreteRI       = (_fretePorConta      && _opResultadoRI) ? _opResultadoRI.totalFrete      : 0;
+    const _totalOperacionalRI = _valorInstalacaoRI + _valorFreteRI;
+
     totalGeralDiv.innerHTML = `
-      <div style="background:var(--brand);color:#fff;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
-        <div>
+      <div style="background:var(--brand);color:#fff;border-radius:10px;padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
           <div style="font-weight:700;font-size:14px;">Total do Projeto — ${itensOrcamento.length} item${itensOrcamento.length > 1 ? 's' : ''}</div>
-          <div style="font-size:11px;opacity:.7;margin-top:2px;">Custo total de materiais</div>
+          <div style="font-size:22px;font-weight:800;">${fmtBRL(_totalMateriaisRI + _totalOperacionalRI)}</div>
         </div>
-        <div style="font-size:22px;font-weight:800;">${calcularTotalGeral()}</div>
+        <div style="font-size:11px;opacity:.85;margin-top:8px;display:flex;justify-content:space-between;">
+          <span>Materiais</span><span>${fmtBRL(_totalMateriaisRI)}</span>
+        </div>
+        ${_valorInstalacaoRI > 0 ? `<div style="font-size:11px;opacity:.85;margin-top:2px;display:flex;justify-content:space-between;">
+          <span>🛠️ Instalação (nossa conta)</span><span>${fmtBRL(_valorInstalacaoRI)}</span>
+        </div>` : ''}
+        ${_valorFreteRI > 0 ? `<div style="font-size:11px;opacity:.85;margin-top:2px;display:flex;justify-content:space-between;">
+          <span>🚛 Frete (nossa conta)</span><span>${fmtBRL(_valorFreteRI)}</span>
+        </div>` : ''}
+        ${(_instalacaoPorConta || _fretePorConta) && !_opResultadoRI ? `<div style="font-size:11px;opacity:.85;margin-top:2px;">⏳ Calculando custos operacionais (aguardando cidade/UF)...</div>` : ''}
       </div>
     `;
   }
@@ -2420,6 +3121,31 @@
     d.innerHTML = html;
     const ml = d.querySelector('.material-list');
     return ml ? ml.innerHTML : '';
+  }
+
+  // ── Instalação/Frete "por nossa conta" (caixa na aba Orçamento) ────────────
+  // Quando marcado SIM, preenche automaticamente (se ainda vazios) os campos que a
+  // aba Custos Operacionais usa — valor do pedido e m² de ACM — e recalcula.
+  function orcAtualizarCustosNoOrcamento() {
+    const instalacaoConta = (document.getElementById('orc-instalacao-conta')?.value || 'NÃO') === 'SIM';
+    const freteConta      = (document.getElementById('orc-frete-conta')?.value      || 'NÃO') === 'SIM';
+
+    if (instalacaoConta || freteConta) {
+      const elPedido = document.getElementById('op-valor-pedido');
+      if (elPedido && !elPedido.value) elPedido.value = calcularTotalGeralNum().toFixed(2);
+
+      const elACM = document.getElementById('op-m2-acm');
+      if (elACM && !elACM.value) {
+        let totalACM = 0;
+        itensOrcamento.forEach(item => {
+          if (item.categoria === 'fachadas' || item.usaACM) totalACM += (item.largura || 0) * (item.alturaVal || 0);
+        });
+        if (totalACM > 0) elACM.value = totalACM.toFixed(2);
+      }
+      calcularCustosOperacionais(); // recalcula e já chama renderItens() internamente
+    } else {
+      renderItens();
+    }
   }
 
   // ── Importar preços da planilha ────────────────────────────────────────────
@@ -2669,9 +3395,11 @@
       job:         document.getElementById('proj-job')?.value         || '',
       pedido:      document.getElementById('proj-pedido')?.value      || '',
       itens:       itensOrcamento,
-      proximoId
+      proximoId,
+      opCustos:    (typeof opColetarInputs === 'function') ? opColetarInputs() : undefined
     };
     localStorage.setItem('granda_projeto', JSON.stringify(dados));
+    if (typeof agendarCalculoAutoDistancia === 'function') agendarCalculoAutoDistancia();
   }
 
   function carregarProjeto() {
@@ -2687,7 +3415,20 @@
       if (dados.pedido)       document.getElementById('proj-pedido').value       = dados.pedido;
       if (dados.itens)        itensOrcamento = dados.itens;
       if (dados.proximoId)    proximoId      = dados.proximoId;
+      if (dados.opCustos) {
+        opRestaurarInputs(dados.opCustos);
+        calcularCustosOperacionais();
+      }
+      // Evita recalcular/zerar uma distância já salva para a mesma cidade/UF
+      const _cidRestaurada = document.getElementById('proj-cidade')?.value?.trim();
+      const _ufRestaurada  = document.getElementById('proj-estado')?.value?.trim();
+      const _distRestaurada = document.getElementById('op-distancia')?.value;
+      if (_cidRestaurada && _ufRestaurada && _distRestaurada) {
+        _ultimaCidadeUFCalculada = _cidRestaurada.toLowerCase() + '|' + _ufRestaurada.toUpperCase();
+      }
+      opAtualizarVisibilidade();
       renderItens();
+      agendarCalculoAutoDistancia();
     } catch(e) { /* silencioso */ }
   }
 
@@ -2727,6 +3468,8 @@
       alert('Adicione pelo menos um item ao orçamento antes de gerar a RM.');
       return;
     }
+    const _custosOpRM      = _d ? (_d.custosOperacionais || null) : (opState.ultimoResultado || null);
+    const _custosOpTotalRM = (_custosOpRM && _custosOpRM.total) || 0;
 
     const empresa     = _d ? (_d.empresa     || 'Cliente') : (document.getElementById('proj-empresa')?.value     || 'Cliente').trim();
     const solicitante = _d ? (_d.solicitante || '')        : (document.getElementById('proj-solicitante')?.value || '').trim();
@@ -2937,10 +3680,19 @@
     ]);
 
     blank();
+    if (_custosOpTotalRM > 0) {
+      push([
+        E(SSUML),
+        cel('CUSTOS OPERACIONAIS (Instalação, Frete e Mobilização)', SSUML), E(SSUML), E(SSUML),
+        cel('—', SSUMR),
+        cel(_custosOpTotalRM, SSUMR, FMT_BRL),
+      ]);
+      blank();
+    }
     push([
       cel('TOTAL GERAL DO PROJETO', STOTL), E(STOTL), E(STOTL), E(STOTL),
       E(STOT),
-      cel(_itens.reduce((s,it)=>s+(it.totalNum||0),0), STOT, FMT_BRL),
+      cel(_itens.reduce((s,it)=>s+(it.totalNum||0),0) + _custosOpTotalRM, STOT, FMT_BRL),
     ]);
     merge(0, 3);
 
@@ -3022,6 +3774,8 @@
       pedido:       (document.getElementById('proj-pedido')?.value      || '').trim(),
       itensOrcamento: JSON.parse(JSON.stringify(itensOrcamento)),
       totalNum:     calcularTotalGeralNum(),
+      opInputs:           (typeof opColetarInputs === 'function') ? opColetarInputs() : null,
+      custosOperacionais: opState.ultimoResultado || null,
     };
     if (window._firebaseOk && window._fbSalvarRM) {
       const isEdicao = !!_editandoFbKey;
@@ -3243,27 +3997,27 @@
     function setView(view) {
     const viewOrc    = document.querySelector('.container');
     const viewLista  = document.getElementById('view-lista');
+    const viewOp     = document.getElementById('view-operacional');
     const navOrc     = document.getElementById('nav-orcamento');
     const navLista   = document.getElementById('nav-lista');
+    const navOp      = document.getElementById('nav-operacional');
     const projHeader = document.getElementById('proj-header-wrap');
     const catSel     = document.getElementById('cat-selector-wrap');
     if (!viewOrc || !viewLista) return;
-    if (view === 'lista') {
-      viewOrc.style.display    = 'none';
-      viewLista.style.display  = 'block';
-      if (projHeader) projHeader.style.display = 'none';
-      if (catSel)     catSel.style.display     = 'none';
-      navOrc.classList.remove('active');
-      navLista.classList.add('active');
-      renderListaRM();
-    } else {
-      viewOrc.style.display    = '';
-      viewLista.style.display  = 'none';
-      if (projHeader) projHeader.style.display = '';
-      if (catSel)     catSel.style.display     = '';
-      navOrc.classList.add('active');
-      navLista.classList.remove('active');
-    }
+
+    viewOrc.style.display   = (view === 'orcamento') ? '' : 'none';
+    viewLista.style.display = (view === 'lista')     ? 'block' : 'none';
+    if (viewOp) viewOp.style.display = (view === 'operacional') ? 'flex' : 'none';
+
+    if (projHeader) projHeader.style.display = (view === 'lista') ? 'none' : '';
+    if (catSel)     catSel.style.display     = (view === 'orcamento') ? '' : 'none';
+
+    navOrc.classList.toggle('active', view === 'orcamento');
+    navLista.classList.toggle('active', view === 'lista');
+    if (navOp) navOp.classList.toggle('active', view === 'operacional');
+
+    if (view === 'lista') renderListaRM();
+    if (view === 'operacional') { opAtualizarVisibilidade(); opRenderResultado(); }
   }
 
   function setCategoria(cat) {
@@ -3404,6 +4158,22 @@
     const maxId = itensOrcamento.reduce((m, it) => Math.max(m, it.id || 0), 0);
     proximoId = maxId + 1;
 
+    // Restaura Custos Operacionais salvos junto com esta RM
+    if (entry.opInputs) {
+      opRestaurarInputs(entry.opInputs);
+      calcularCustosOperacionais();
+    } else if (typeof opLimparCampos === 'function') {
+      opLimparCampos();
+    }
+
+    // Evita recalcular/zerar uma distância já salva para esta cidade/UF
+    const _cidRM = document.getElementById('proj-cidade')?.value?.trim();
+    const _ufRM  = document.getElementById('proj-estado')?.value?.trim();
+    const _distRM = document.getElementById('op-distancia')?.value;
+    if (_cidRM && _ufRM && _distRM) {
+      _ultimaCidadeUFCalculada = _cidRM.toLowerCase() + '|' + _ufRM.toUpperCase();
+    }
+
     // Marca que estamos editando um registro existente
     _editandoFbKey = entry._fbKey || null;
     _orcSalvo = false;
@@ -3499,6 +4269,7 @@
     carregarListaRM();
     atualizarArea();
     carregarPrecosGSheets(true);
+    if (typeof opAtualizarVisibilidade === 'function') opAtualizarVisibilidade();
   });
 
 </script>
