@@ -1045,6 +1045,13 @@
     font-size: 12.5px;
   }
   .op-resultado-header .btn-salvar-orc:hover { background: rgba(255,255,255,.26); }
+  #op-toolbar-header {
+    position: sticky;
+    top: var(--navbar-h, 46px);
+    z-index: 190;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.14);
+  }
   .op-btn-pdf {
     background: var(--accent);
     color: #fff;
@@ -1158,6 +1165,9 @@
     🗂️ Operacionais Salvos
     <span class="nav-badge" id="lista-operacional-badge"></span>
   </button>
+  <button class="nav-tab" onclick="abrirConfiguracoes()" id="nav-config">
+    ⚙️ Configurações
+  </button>
 </nav>
 
 <div id="orc-toolbar-wrap" style="max-width:980px;margin:24px auto 0;padding:0 20px;">
@@ -1239,6 +1249,11 @@
           <div class="cat-icon">🪧</div>
           <div class="cat-name">Placas</div>
           <div class="cat-desc">Placas de identificação e sinalização</div>
+        </button>
+        <button class="cat-card" onclick="setCategoria('config')" id="cat-config">
+          <div class="cat-icon">🧩</div>
+          <div class="cat-name">Produto Configurado</div>
+          <div class="cat-desc">Produtos cadastrados em ⚙️ Configurações</div>
         </button>
       </div>
     </div>
@@ -1381,6 +1396,51 @@
 
         <button onclick="addItemFachada()" style="width:100%;background:var(--green);color:#fff;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;">＋ Adicionar ao Orçamento</button>
       </div><!-- /painel-fachadas -->
+
+      <div id="painel-config" class="op-card" style="display:none;">
+
+        <div style="margin-bottom:12px;">
+          <label>Produto Configurado</label>
+          <select id="config-produto-select" onchange="setProdutoConfigSelecionado(this.value)">
+            <option value="">Nenhum produto configurado — cadastre em ⚙️ Configurações</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label>Nome do Item <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+          <input type="text" id="config-nome-item" placeholder="Ex: Totem loja Shopping X">
+        </div>
+
+        <div id="config-grupo-largalt" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Largura</label>
+            <div class="input-wrap">
+              <input type="number" id="config-largura" min="0" step="0.01" placeholder="0,00">
+              <span class="unit">m</span>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Altura</label>
+            <div class="input-wrap">
+              <input type="number" id="config-altura" min="0" step="0.01" placeholder="0,00">
+              <span class="unit">m</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="config-grupo-caixa" class="form-group" style="display:none;margin-top:12px;">
+          <label>Profundidade da caixa</label>
+          <div class="input-wrap">
+            <input type="number" id="config-caixa" min="0" step="0.01" placeholder="0,00">
+            <span class="unit">m</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <button type="button" onclick="calcularProdutoConfigurado()" style="width:100%;background:none;border:1.5px solid var(--brand);color:var(--brand);border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.2px;margin-bottom:8px;">🧮 Calcular</button>
+          <button type="button" onclick="addItemConfigurado()" style="width:100%;background:var(--green);color:#fff;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;">＋ Adicionar ao Orçamento</button>
+        </div>
+      </div><!-- /painel-config -->
     </div>
 
     <!-- Configurações de preço -->
@@ -1661,6 +1721,15 @@
 <!-- ── Vista: Custos Operacionais ── -->
 <div id="view-operacional" style="display:none;">
 
+  <div class="card-header op-resultado-header" id="op-toolbar-header">
+    <span class="icon">📊</span> Resultado — Custos Operacionais
+    <div class="op-resultado-actions">
+      <button onclick="salvarOperacionais(this)" class="btn-salvar-orc">💾 Salvar Operacionais</button>
+      <button onclick="gerarPdfOperacionais()" class="op-btn-pdf">📄 Gerar PDF</button>
+      <button onclick="novosOperacionais()" title="Limpar campos e começar um novo preenchimento" style="margin-left:0;background:#6b7a90;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;letter-spacing:.3px;">✕ Novos Operacionais</button>
+    </div>
+  </div>
+
   <div class="card op-card">
     <div class="card-header"><span class="icon">🚚</span> Custos Operacionais — Instalação, Frete e Mobilização</div>
     <div class="card-body">
@@ -1831,13 +1900,6 @@
   </div>
 
   <div class="card">
-    <div class="card-header op-resultado-header">
-      <span class="icon">📊</span> Resultado — Custos Operacionais
-      <div class="op-resultado-actions">
-        <button onclick="salvarOperacionais(this)" class="btn-salvar-orc">💾 Salvar Operacionais</button>
-        <button onclick="gerarPdfOperacionais()" class="op-btn-pdf">📄 Gerar PDF</button>
-      </div>
-    </div>
     <div class="card-body" id="op-resultado">
       <div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>
     </div>
@@ -1899,6 +1961,65 @@
   </div>
 </div>
 
+<!-- ── Vista: Configurações (produtos e matérias-primas configuráveis) ── -->
+<div id="view-config" style="display:none;">
+  <div class="card op-card">
+    <div class="card-header"><span class="icon">⚙️</span> Configurações — Produtos e Matérias-Primas</div>
+    <div class="card-body">
+      <div class="tipo-tabs" style="margin-bottom:16px;">
+        <button class="tipo-tab active" id="cfg-tab-materias" onclick="cfgSetSubView('materias')">🧱 Matérias-Primas</button>
+        <button class="tipo-tab" id="cfg-tab-produtos" onclick="cfgSetSubView('produtos')">📦 Produtos Configurados</button>
+      </div>
+
+      <!-- Sub-vista: Matérias-Primas -->
+      <div id="cfg-subview-materias">
+        <div class="op-hint" style="margin-bottom:14px;">Cadastre aqui as matérias-primas usadas nos produtos configurados (nome, unidade e preço).</div>
+        <div id="cfg-mp-form" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:0;"><label>Nome</label>
+            <input type="text" id="cfg-mp-nome" placeholder="Ex: Chapa Alucobond 4mm"></div>
+          <div class="form-group" style="margin-bottom:0;"><label>Unidade</label>
+            <input type="text" id="cfg-mp-unidade" placeholder="Ex: chapa, m², un, litro"></div>
+          <div class="form-group" style="margin-bottom:0;"><label>Preço (R$)</label>
+            <input type="number" id="cfg-mp-preco" min="0" step="0.01" placeholder="0,00"></div>
+          <button type="button" id="cfg-mp-salvar-btn" onclick="novaMateriaConfig()" style="background:var(--brand);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Adicionar Matéria-Prima</button>
+        </div>
+        <div id="cfg-materias-lista"></div>
+      </div>
+
+      <!-- Sub-vista: Produtos Configurados -->
+      <div id="cfg-subview-produtos" style="display:none;">
+        <div id="cfg-produtos-lista-wrap">
+          <div class="op-hint" style="margin-bottom:14px;">Cada produto configurado é uma receita: uma lista de matérias-primas, cada uma com sua forma de calcular a quantidade.</div>
+          <button type="button" onclick="abrirNovoProdutoForm()" style="margin-bottom:14px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">+ Novo Produto</button>
+          <div id="cfg-produtos-lista"></div>
+        </div>
+
+        <div id="cfg-produto-builder" style="display:none;">
+          <div class="form-group"><label>Nome do Produto</label>
+            <input type="text" id="cfg-produto-nome" placeholder="Ex: Totem Luminoso ACM"></div>
+
+          <div style="display:flex;gap:20px;margin:10px 0 18px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text);text-transform:none;">
+              <input type="checkbox" id="cfg-produto-usa-largalt" onchange="cfgProdutoTogglecampo('usaLargAlt')" style="width:auto;"> Usa Largura/Altura (calcula área e perímetro)
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text);text-transform:none;">
+              <input type="checkbox" id="cfg-produto-usa-caixa" onchange="cfgProdutoTogglecampo('usaCaixa')" style="width:auto;"> Usa Profundidade da caixa
+            </label>
+          </div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">Itens da Receita</div>
+          <div id="cfg-receita-itens"></div>
+          <button type="button" class="btn-add-adesivo" onclick="adicionarItemReceita()" style="margin-bottom:16px;">+ Adicionar Matéria-Prima à Receita</button>
+
+          <div style="display:flex;gap:10px;">
+            <button type="button" onclick="salvarProdutoConfigurado()" style="flex:1;background:var(--green);color:#fff;border:none;border-radius:8px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;">💾 Salvar Produto</button>
+            <button type="button" onclick="fecharNovoProdutoForm()" style="background:#6b7a90;color:#fff;border:none;border-radius:8px;padding:12px 18px;font-size:13px;font-weight:700;cursor:pointer;">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /view-config -->
 
 
 <script>
@@ -2054,6 +2175,660 @@
     opAtualizarVisibilidade();
     opRenderResultado();
   }
+
+  function novosOperacionais() {
+    const temResultado = opState.ultimoResultado && opState.ultimoResultado.itens && opState.ultimoResultado.itens.length;
+    if (temResultado) {
+      const resp = confirm('⚠️ Isso vai limpar todos os campos de Custos Operacionais preenchidos.\n\nSe ainda não salvou este cálculo (💾 Salvar Operacionais), ele será perdido.\n\nDeseja continuar?');
+      if (!resp) return;
+    }
+    opLimparCampos();
+  }
+// ══════════════════════════════════════════════════════════════════════
+// PRODUTOS CONFIGURADOS — Motor de Cálculo Paramétrico (menu Configurações)
+// Permite cadastrar produtos novos sem mexer em código: cada produto é uma
+// "receita" com uma lista de matérias-primas, cada uma com um tipo de cálculo.
+// NÃO toca nos cálculos imutáveis de letras caixa / fachadas.
+// ══════════════════════════════════════════════════════════════════════
+
+  const SENHA_CONFIG = '3028';
+
+  let catalogoMateriasPrimasConfig = []; // [{id, nome, unidade, preco}]
+  let produtosConfigurados = [];         // [{id, nome, usaLargAlt, usaCaixa, itens:[...]}]
+  let novoProdutoState = null;           // rascunho em edição no formulário de novo produto
+  let produtoConfigSelecionadoId = null; // produto escolhido na aba Orçamento (categoria 'config')
+
+  function cfgGerarId() { return 'cfg_' + Date.now() + '_' + Math.floor(Math.random() * 10000); }
+
+  // ── Persistência local (matérias-primas e produtos ficam só neste navegador) ─
+  function salvarMateriasConfigLocal() {
+    localStorage.setItem('granda_materias_config', JSON.stringify(catalogoMateriasPrimasConfig));
+  }
+  function carregarMateriasConfigLocal() {
+    try {
+      const raw = localStorage.getItem('granda_materias_config');
+      catalogoMateriasPrimasConfig = raw ? JSON.parse(raw) : [];
+    } catch(e) { catalogoMateriasPrimasConfig = []; }
+  }
+  function salvarProdutosConfigLocal() {
+    localStorage.setItem('granda_produtos_config', JSON.stringify(produtosConfigurados));
+  }
+  function carregarProdutosConfigLocal() {
+    try {
+      const raw = localStorage.getItem('granda_produtos_config');
+      produtosConfigurados = raw ? JSON.parse(raw) : [];
+    } catch(e) { produtosConfigurados = []; }
+  }
+
+  function cfgGetMateria(materiaId) {
+    return catalogoMateriasPrimasConfig.find(m => m.id === materiaId) || null;
+  }
+
+  // ── Acesso à aba Configurações (senha própria, separada da senha geral) ─────
+  function abrirConfiguracoes() {
+    if (sessionStorage.getItem('granda_auth_config') === '1') {
+      setView('config');
+      return;
+    }
+    const senha = prompt('🔒 Senha de acesso às Configurações:');
+    if (senha === null) return;
+    if (senha === SENHA_CONFIG) {
+      sessionStorage.setItem('granda_auth_config', '1');
+      setView('config');
+    } else {
+      alert('Senha incorreta.');
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // MOTOR DE CÁLCULO — executa a receita de um produto configurado
+  // ══════════════════════════════════════════════════════════════════════
+  function cfgExecutarReceita(produto, entradas) {
+    const largura   = entradas.largura || 0;
+    const altura    = entradas.altura  || 0;
+    const caixaM    = entradas.caixaM  || 0;
+    const area      = produto.usaLargAlt ? (largura * altura)     : 0;
+    const perimetro = produto.usaLargAlt ? (2 * (largura + altura)) : 0;
+
+    const resultados = []; // paralelo a produto.itens — null quando condição não bate
+
+    produto.itens.forEach((ri, idx) => {
+      // ── condição de entrada do item ──
+      if (ri.condicao === 'altura_maior' && !(altura > (parseFloat(ri.condicaoValor) || 0))) {
+        resultados[idx] = null; return;
+      }
+      if (ri.condicao === 'caixa_maior_zero' && !(caixaM > 0)) {
+        resultados[idx] = null; return;
+      }
+
+      let qty = 0, materiaUsada = cfgGetMateria(ri.materiaId), extra = '';
+      let precoUnit = materiaUsada ? (parseFloat(materiaUsada.preco) || 0) : 0;
+      let areaChapaEscolhida = null; // usado por 'derivado' quando a origem é 'aproveitamento'
+
+      if (ri.tipo === 'area') {
+        const areaChapa = parseFloat(ri.params.areaChapaM2) || 0;
+        qty = areaChapa > 0 ? ceilDec(area / areaChapa) : 0;
+
+      } else if (ri.tipo === 'perimetro') {
+        const fator = parseFloat(ri.params.fator) || 0;
+        qty = ri.params.modo === 'multiplica' ? Math.ceil(perimetro * fator)
+                                               : (fator > 0 ? Math.ceil(perimetro / fator) : 0);
+
+      } else if (ri.tipo === 'aproveitamento') {
+        let melhor = null;
+        (ri.params.opcoes || []).forEach(op => {
+          const areaChapa = parseFloat(op.areaChapaM2) || 0;
+          if (areaChapa <= 0) return;
+          const teor = area / areaChapa;
+          const real = Math.ceil(teor);
+          const util = real > 0 ? teor / real : 0;
+          if (!melhor || util > melhor.util) melhor = { ...op, teor, real, util, areaChapa };
+        });
+        if (melhor) {
+          qty = melhor.real;
+          materiaUsada = cfgGetMateria(melhor.materiaId);
+          precoUnit = materiaUsada ? (parseFloat(materiaUsada.preco) || 0) : 0;
+          extra = ' · aproveitamento ' + (melhor.util * 100).toFixed(0) + '%';
+          areaChapaEscolhida = melhor.areaChapa;
+        }
+
+      } else if (ri.tipo === 'derivado') {
+        const origemIdx = parseInt(ri.params.deItemIndex, 10);
+        const base = resultados[origemIdx];
+        let valorBase = 0;
+        if (base) {
+          if (ri.params.campo === 'areaComprada') {
+            valorBase = base.qty * (base._areaChapa || 0);
+          } else {
+            valorBase = base.qty;
+          }
+        }
+        const fator = parseFloat(ri.params.fator) || 0;
+        const bruto = valorBase * fator;
+        qty = ri.params.arred === 'ceil' ? Math.ceil(bruto) : arred(bruto, 2);
+
+      } else if (ri.tipo === 'menorCusto') {
+        let baseValor = 0;
+        if (ri.params.baseCampo === 'perimetro') {
+          baseValor = perimetro;
+        } else {
+          const origemIdx = parseInt(ri.params.deItemIndex, 10);
+          baseValor = (resultados[origemIdx] && resultados[origemIdx].qty) || 0;
+        }
+        const necessidade = baseValor * (parseFloat(ri.params.baseFator) || 0);
+        let melhorOp = null;
+        (ri.params.opcoes || []).forEach(op => {
+          const cap = parseFloat(op.capacidade) || 0;
+          if (cap <= 0) return;
+          const m = cfgGetMateria(op.materiaId);
+          const precoOp = m ? (parseFloat(m.preco) || 0) : 0;
+          const qOp = Math.ceil(necessidade / cap);
+          const custoOp = qOp * precoOp;
+          if (!melhorOp || custoOp < melhorOp.custoOp) melhorOp = { ...op, qOp, custoOp, precoOp, m };
+        });
+        if (melhorOp) {
+          qty = melhorOp.qOp;
+          materiaUsada = melhorOp.m;
+          precoUnit = melhorOp.precoOp;
+        }
+      }
+
+      if (ri.minimo !== null && ri.minimo !== undefined && ri.minimo !== '' && qty < parseFloat(ri.minimo)) {
+        qty = parseFloat(ri.minimo);
+      }
+
+      const total = qty * precoUnit;
+      resultados[idx] = {
+        nome:      materiaUsada ? materiaUsada.nome : '(matéria-prima não encontrada)',
+        unidade:   materiaUsada ? (materiaUsada.unidade || '') : '',
+        qty, precoUnit, total, extra,
+        _areaChapa: areaChapaEscolhida !== null ? areaChapaEscolhida : (ri.tipo === 'area' ? (parseFloat(ri.params.areaChapaM2) || 0) : 0)
+      };
+    });
+
+    return resultados;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // TELA CONFIGURAÇÕES — Matérias-Primas
+  // ══════════════════════════════════════════════════════════════════════
+  function renderMateriasConfig() {
+    const cont = document.getElementById('cfg-materias-lista');
+    if (!cont) return;
+    if (catalogoMateriasPrimasConfig.length === 0) {
+      cont.innerHTML = '<div class="lista-empty"><div class="big">🧱</div><p>Nenhuma matéria-prima cadastrada ainda.</p></div>';
+      return;
+    }
+    cont.innerHTML = catalogoMateriasPrimasConfig.map(m => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:#fff;">
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">${escHtml(m.nome)}</div>
+          <div style="font-size:11px;color:var(--muted);">${escHtml(m.unidade || '')} · ${fmtBRL(parseFloat(m.preco) || 0)}</div>
+        </div>
+        <button type="button" class="btn-lista btn-lista-edit" onclick="editarMateriaConfig('${m.id}')">✏️ Editar</button>
+        <button type="button" class="btn-lista btn-lista-del" onclick="excluirMateriaConfig('${m.id}')">🗑️ Excluir</button>
+      </div>
+    `).join('');
+  }
+
+  function novaMateriaConfig() {
+    const nome = (document.getElementById('cfg-mp-nome')?.value || '').trim();
+    const unidade = (document.getElementById('cfg-mp-unidade')?.value || '').trim();
+    const preco = parseFloat(document.getElementById('cfg-mp-preco')?.value) || 0;
+    if (!nome) { alert('Informe o nome da matéria-prima.'); return; }
+
+    const editandoId = document.getElementById('cfg-mp-form')?.dataset.editandoId;
+    if (editandoId) {
+      const m = cfgGetMateria(editandoId);
+      if (m) { m.nome = nome; m.unidade = unidade; m.preco = preco; }
+      delete document.getElementById('cfg-mp-form').dataset.editandoId;
+      document.getElementById('cfg-mp-salvar-btn').textContent = '+ Adicionar Matéria-Prima';
+    } else {
+      catalogoMateriasPrimasConfig.push({ id: cfgGerarId(), nome, unidade, preco });
+    }
+
+    salvarMateriasConfigLocal();
+    renderMateriasConfig();
+    cfgAtualizarSelectsMateria();
+    document.getElementById('cfg-mp-nome').value = '';
+    document.getElementById('cfg-mp-unidade').value = '';
+    document.getElementById('cfg-mp-preco').value = '';
+  }
+
+  function editarMateriaConfig(id) {
+    const m = cfgGetMateria(id);
+    if (!m) return;
+    document.getElementById('cfg-mp-nome').value = m.nome;
+    document.getElementById('cfg-mp-unidade').value = m.unidade || '';
+    document.getElementById('cfg-mp-preco').value = m.preco;
+    document.getElementById('cfg-mp-form').dataset.editandoId = id;
+    document.getElementById('cfg-mp-salvar-btn').textContent = '💾 Salvar Edição';
+    document.getElementById('cfg-mp-nome').focus();
+  }
+
+  function excluirMateriaConfig(id) {
+    if (!confirm('Excluir esta matéria-prima? Produtos que a usam ficarão sem preço para ela.')) return;
+    catalogoMateriasPrimasConfig = catalogoMateriasPrimasConfig.filter(m => m.id !== id);
+    salvarMateriasConfigLocal();
+    renderMateriasConfig();
+    cfgAtualizarSelectsMateria();
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // TELA CONFIGURAÇÕES — Produtos (lista + builder de receita)
+  // ══════════════════════════════════════════════════════════════════════
+  function renderProdutosConfig() {
+    const cont = document.getElementById('cfg-produtos-lista');
+    if (!cont) return;
+    if (produtosConfigurados.length === 0) {
+      cont.innerHTML = '<div class="lista-empty"><div class="big">📦</div><p>Nenhum produto configurado ainda.<br>Clique em <strong>+ Novo Produto</strong> para criar o primeiro.</p></div>';
+      return;
+    }
+    cont.innerHTML = produtosConfigurados.map(p => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:#fff;">
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">${escHtml(p.nome)}</div>
+          <div style="font-size:11px;color:var(--muted);">${p.itens.length} item(ns) na receita ${p.usaLargAlt ? '· usa Largura/Altura' : ''} ${p.usaCaixa ? '· usa Profundidade' : ''}</div>
+        </div>
+        <button type="button" class="btn-lista btn-lista-edit" onclick="editarProdutoConfigurado('${p.id}')">✏️ Editar</button>
+        <button type="button" class="btn-lista btn-lista-del" onclick="excluirProdutoConfigurado('${p.id}')">🗑️ Excluir</button>
+      </div>
+    `).join('');
+  }
+
+  function excluirProdutoConfigurado(id) {
+    if (!confirm('Excluir este produto configurado?')) return;
+    produtosConfigurados = produtosConfigurados.filter(p => p.id !== id);
+    salvarProdutosConfigLocal();
+    renderProdutosConfig();
+    cfgAtualizarSelectProdutos();
+  }
+
+  function abrirNovoProdutoForm(idParaEditar) {
+    if (idParaEditar) {
+      const original = produtosConfigurados.find(p => p.id === idParaEditar);
+      novoProdutoState = JSON.parse(JSON.stringify(original));
+    } else {
+      novoProdutoState = { id: null, nome: '', usaLargAlt: true, usaCaixa: false, itens: [] };
+    }
+    document.getElementById('cfg-produto-nome').value = novoProdutoState.nome;
+    document.getElementById('cfg-produto-usa-largalt').checked = novoProdutoState.usaLargAlt;
+    document.getElementById('cfg-produto-usa-caixa').checked = novoProdutoState.usaCaixa;
+    document.getElementById('cfg-produto-builder').style.display = '';
+    document.getElementById('cfg-produtos-lista-wrap').style.display = 'none';
+    renderReceitaBuilder();
+  }
+
+  function editarProdutoConfigurado(id) { abrirNovoProdutoForm(id); }
+
+  function fecharNovoProdutoForm() {
+    novoProdutoState = null;
+    document.getElementById('cfg-produto-builder').style.display = 'none';
+    document.getElementById('cfg-produtos-lista-wrap').style.display = '';
+  }
+
+  function cfgProdutoTogglecampo(campo) {
+    if (!novoProdutoState) return;
+    novoProdutoState[campo] = document.getElementById('cfg-produto-' + (campo === 'usaLargAlt' ? 'usa-largalt' : 'usa-caixa')).checked;
+  }
+
+  function adicionarItemReceita() {
+    if (!novoProdutoState) return;
+    novoProdutoState.itens.push({
+      id: cfgGerarId(),
+      materiaId: catalogoMateriasPrimasConfig[0] ? catalogoMateriasPrimasConfig[0].id : '',
+      tipo: 'area',
+      params: { areaChapaM2: '' },
+      minimo: '',
+      condicao: 'sempre',
+      condicaoValor: ''
+    });
+    renderReceitaBuilder();
+  }
+
+  function removerItemReceita(idx) {
+    if (!novoProdutoState) return;
+    novoProdutoState.itens.splice(idx, 1);
+    renderReceitaBuilder();
+  }
+
+  function cfgAtualizarItemReceita(idx, campo, valor) {
+    if (!novoProdutoState) return;
+    const ri = novoProdutoState.itens[idx];
+    if (!ri) return;
+    if (campo === 'tipo') {
+      ri.tipo = valor;
+      // reseta params ao trocar de tipo, pra não misturar campos de tipos diferentes
+      if (valor === 'area') ri.params = { areaChapaM2: '' };
+      else if (valor === 'perimetro') ri.params = { modo: 'divide', fator: '' };
+      else if (valor === 'aproveitamento') ri.params = { opcoes: [{ materiaId: ri.materiaId, areaChapaM2: '' }, { materiaId: ri.materiaId, areaChapaM2: '' }] };
+      else if (valor === 'derivado') ri.params = { deItemIndex: '0', campo: 'qtd', fator: '', arred: 'ceil' };
+      else if (valor === 'menorCusto') ri.params = { baseCampo: 'perimetro', deItemIndex: '0', baseFator: '', opcoes: [{ materiaId: ri.materiaId, capacidade: '' }] };
+      renderReceitaBuilder();
+      return;
+    }
+    if (campo === 'materiaId') ri.materiaId = valor;
+    else if (campo === 'minimo') ri.minimo = valor;
+    else if (campo === 'condicao') { ri.condicao = valor; renderReceitaBuilder(); return; }
+    else if (campo === 'condicaoValor') ri.condicaoValor = valor;
+    else if (campo.startsWith('param.')) ri.params[campo.slice(6)] = valor;
+  }
+
+  function cfgAtualizarOpcao(idx, opIdx, campo, valor) {
+    const ri = novoProdutoState.itens[idx];
+    if (!ri || !ri.params.opcoes) return;
+    ri.params.opcoes[opIdx][campo] = valor;
+  }
+  function cfgAddOpcao(idx) {
+    const ri = novoProdutoState.itens[idx];
+    if (!ri) return;
+    const primeiraMateria = catalogoMateriasPrimasConfig[0] ? catalogoMateriasPrimasConfig[0].id : '';
+    if (ri.tipo === 'aproveitamento') ri.params.opcoes.push({ materiaId: primeiraMateria, areaChapaM2: '' });
+    else ri.params.opcoes.push({ materiaId: primeiraMateria, capacidade: '' });
+    renderReceitaBuilder();
+  }
+  function cfgRemoveOpcao(idx, opIdx) {
+    const ri = novoProdutoState.itens[idx];
+    if (!ri) return;
+    ri.params.opcoes.splice(opIdx, 1);
+    renderReceitaBuilder();
+  }
+
+  function cfgOptMateriaSelect(valorSelecionado, onchangeAttr) {
+    return '<select onchange="' + onchangeAttr + '" style="flex:1;">' +
+      catalogoMateriasPrimasConfig.map(m => '<option value="' + m.id + '"' + (m.id === valorSelecionado ? ' selected' : '') + '>' + escHtml(m.nome) + '</option>').join('') +
+      '</select>';
+  }
+
+  function renderReceitaBuilder() {
+    const cont = document.getElementById('cfg-receita-itens');
+    if (!cont || !novoProdutoState) return;
+
+    if (catalogoMateriasPrimasConfig.length === 0) {
+      cont.innerHTML = '<div class="op-hint">⚠️ Cadastre ao menos uma matéria-prima (aba ao lado) antes de montar a receita.</div>';
+      return;
+    }
+
+    cont.innerHTML = novoProdutoState.itens.map((ri, idx) => {
+      const rotulo = 'Item ' + (idx + 1);
+      let paramsHtml = '';
+
+      if (ri.tipo === 'area') {
+        paramsHtml = `
+          <div class="form-group"><label>Área da chapa/placa (m²)</label>
+            <input type="number" step="0.001" min="0" value="${ri.params.areaChapaM2 ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'param.areaChapaM2', this.value)"></div>`;
+      } else if (ri.tipo === 'perimetro') {
+        paramsHtml = `
+          <div class="form-group"><label>Modo</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.modo', this.value)">
+              <option value="divide" ${ri.params.modo === 'divide' ? 'selected' : ''}>Perímetro ÷ fator (ex.: 1 módulo a cada 0,12m)</option>
+              <option value="multiplica" ${ri.params.modo === 'multiplica' ? 'selected' : ''}>Perímetro × fator (ex.: 20 parafusos por metro)</option>
+            </select></div>
+          <div class="form-group"><label>Fator</label>
+            <input type="number" step="0.001" min="0" value="${ri.params.fator ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'param.fator', this.value)"></div>`;
+      } else if (ri.tipo === 'aproveitamento') {
+        const opcoesHtml = (ri.params.opcoes || []).map((op, opIdx) => `
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            ${cfgOptMateriaSelect(op.materiaId, "cfgAtualizarOpcao(" + idx + "," + opIdx + ",'materiaId',this.value)")}
+            <input type="number" step="0.001" min="0" placeholder="Área da chapa (m²)" value="${op.areaChapaM2 ?? ''}" style="width:150px;"
+              onchange="cfgAtualizarOpcao(${idx}, ${opIdx}, 'areaChapaM2', this.value)">
+            <button type="button" class="btn-remove-adesivo" onclick="cfgRemoveOpcao(${idx}, ${opIdx})">✕</button>
+          </div>`).join('');
+        paramsHtml = `
+          <div class="op-hint" style="margin-bottom:6px;">O sistema testa cada opção de chapa e escolhe a de menor desperdício.</div>
+          ${opcoesHtml}
+          <button type="button" class="btn-add-adesivo" onclick="cfgAddOpcao(${idx})">+ Adicionar opção de chapa</button>`;
+      } else if (ri.tipo === 'derivado') {
+        const outrosItens = novoProdutoState.itens
+          .map((o, i) => ({ i, nome: (cfgGetMateria(o.materiaId)?.nome) || ('Item ' + (i + 1)) }))
+          .filter(o => o.i !== idx && o.i < idx);
+        paramsHtml = `
+          <div class="op-hint" style="margin-bottom:6px;">Calcula a partir do resultado de outro item já adicionado acima na receita.</div>
+          <div class="form-group"><label>Derivado de</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.deItemIndex', this.value)">
+              ${outrosItens.length ? outrosItens.map(o => `<option value="${o.i}" ${String(ri.params.deItemIndex) === String(o.i) ? 'selected' : ''}>${escHtml(o.nome)}</option>`).join('') : '<option value="">— adicione um item antes deste —</option>'}
+            </select></div>
+          <div class="form-group"><label>Com base em</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.campo', this.value)">
+              <option value="qtd" ${ri.params.campo === 'qtd' ? 'selected' : ''}>Quantidade comprada do item de origem</option>
+              <option value="areaComprada" ${ri.params.campo === 'areaComprada' ? 'selected' : ''}>Área comprada do item de origem (m²)</option>
+            </select></div>
+          <div class="form-group"><label>Fator multiplicador</label>
+            <input type="number" step="0.0001" min="0" value="${ri.params.fator ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'param.fator', this.value)"></div>
+          <div class="form-group"><label>Arredondamento</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.arred', this.value)">
+              <option value="ceil" ${ri.params.arred === 'ceil' ? 'selected' : ''}>Sempre para cima (unidades inteiras)</option>
+              <option value="2casas" ${ri.params.arred === '2casas' ? 'selected' : ''}>2 casas decimais (ex.: litros)</option>
+            </select></div>`;
+      } else if (ri.tipo === 'menorCusto') {
+        const outrosItens = novoProdutoState.itens
+          .map((o, i) => ({ i, nome: (cfgGetMateria(o.materiaId)?.nome) || ('Item ' + (i + 1)) }))
+          .filter(o => o.i !== idx && o.i < idx);
+        const opcoesHtml = (ri.params.opcoes || []).map((op, opIdx) => `
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            ${cfgOptMateriaSelect(op.materiaId, "cfgAtualizarOpcao(" + idx + "," + opIdx + ",'materiaId',this.value)")}
+            <input type="number" step="0.001" min="0" placeholder="Capacidade da opção" value="${op.capacidade ?? ''}" style="width:150px;"
+              onchange="cfgAtualizarOpcao(${idx}, ${opIdx}, 'capacidade', this.value)">
+            <button type="button" class="btn-remove-adesivo" onclick="cfgRemoveOpcao(${idx}, ${opIdx})">✕</button>
+          </div>`).join('');
+        paramsHtml = `
+          <div class="op-hint" style="margin-bottom:6px;">Testa cada opção (ex.: potências/tamanhos diferentes) e escolhe a de menor custo total.</div>
+          <div class="form-group"><label>Necessidade baseada em</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.baseCampo', this.value)">
+              <option value="perimetro" ${ri.params.baseCampo === 'perimetro' ? 'selected' : ''}>Perímetro da peça</option>
+              <option value="derivado" ${ri.params.baseCampo === 'derivado' ? 'selected' : ''}>Resultado de outro item da receita</option>
+            </select></div>
+          ${ri.params.baseCampo === 'derivado' ? `<div class="form-group"><label>Qual item</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'param.deItemIndex', this.value)">
+              ${outrosItens.length ? outrosItens.map(o => `<option value="${o.i}" ${String(ri.params.deItemIndex) === String(o.i) ? 'selected' : ''}>${escHtml(o.nome)}</option>`).join('') : '<option value="">— adicione um item antes deste —</option>'}
+            </select></div>` : ''}
+          <div class="form-group"><label>Fator (multiplica a base acima para achar a necessidade)</label>
+            <input type="number" step="0.0001" min="0" value="${ri.params.baseFator ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'param.baseFator', this.value)"></div>
+          ${opcoesHtml}
+          <button type="button" class="btn-add-adesivo" onclick="cfgAddOpcao(${idx})">+ Adicionar opção</button>`;
+      }
+
+      const mostraSeletorMateriaPrincipal = (ri.tipo === 'area' || ri.tipo === 'perimetro' || ri.tipo === 'derivado');
+
+      return `
+      <div style="border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;background:#f8fafc;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-weight:700;font-size:12px;color:var(--brand);text-transform:uppercase;letter-spacing:.3px;">${rotulo}</div>
+          <button type="button" class="btn-remove-adesivo" onclick="removerItemReceita(${idx})">✕ Remover item</button>
+        </div>
+
+        ${mostraSeletorMateriaPrincipal ? `<div class="form-group"><label>Matéria-prima</label>
+          ${cfgOptMateriaSelect(ri.materiaId, "cfgAtualizarItemReceita(" + idx + ", 'materiaId', this.value)")}</div>` : ''}
+
+        <div class="form-group"><label>Tipo de cálculo</label>
+          <select onchange="cfgAtualizarItemReceita(${idx}, 'tipo', this.value)">
+            <option value="area" ${ri.tipo === 'area' ? 'selected' : ''}>Por área (área da peça ÷ área da chapa)</option>
+            <option value="aproveitamento" ${ri.tipo === 'aproveitamento' ? 'selected' : ''}>Melhor aproveitamento (escolhe entre chapas candidatas)</option>
+            <option value="perimetro" ${ri.tipo === 'perimetro' ? 'selected' : ''}>Por perímetro (linear)</option>
+            <option value="derivado" ${ri.tipo === 'derivado' ? 'selected' : ''}>Derivado de outro item da receita</option>
+            <option value="menorCusto" ${ri.tipo === 'menorCusto' ? 'selected' : ''}>Menor custo entre opções (ex.: reator/potência)</option>
+          </select>
+        </div>
+
+        ${paramsHtml}
+
+        <div class="op-grid" style="margin-top:10px;">
+          <div class="form-group"><label>Quantidade mínima <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+            <input type="number" step="0.01" min="0" value="${ri.minimo ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'minimo', this.value)"></div>
+          <div class="form-group"><label>Condição de entrada</label>
+            <select onchange="cfgAtualizarItemReceita(${idx}, 'condicao', this.value)">
+              <option value="sempre" ${ri.condicao === 'sempre' ? 'selected' : ''}>Sempre entra na receita</option>
+              <option value="altura_maior" ${ri.condicao === 'altura_maior' ? 'selected' : ''}>Só se a altura for maior que...</option>
+              <option value="caixa_maior_zero" ${ri.condicao === 'caixa_maior_zero' ? 'selected' : ''}>Só se houver profundidade de caixa</option>
+            </select></div>
+          ${ri.condicao === 'altura_maior' ? `<div class="form-group"><label>Altura (m)</label>
+            <input type="number" step="0.01" min="0" value="${ri.condicaoValor ?? ''}"
+              onchange="cfgAtualizarItemReceita(${idx}, 'condicaoValor', this.value)"></div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function salvarProdutoConfigurado() {
+    if (!novoProdutoState) return;
+    const nome = (document.getElementById('cfg-produto-nome')?.value || '').trim();
+    if (!nome) { alert('Informe o nome do produto.'); return; }
+    if (novoProdutoState.itens.length === 0) { alert('Adicione ao menos um item de matéria-prima à receita.'); return; }
+
+    novoProdutoState.nome = nome;
+    novoProdutoState.usaLargAlt = document.getElementById('cfg-produto-usa-largalt').checked;
+    novoProdutoState.usaCaixa   = document.getElementById('cfg-produto-usa-caixa').checked;
+
+    if (novoProdutoState.id) {
+      const idx = produtosConfigurados.findIndex(p => p.id === novoProdutoState.id);
+      if (idx >= 0) produtosConfigurados[idx] = novoProdutoState;
+    } else {
+      novoProdutoState.id = cfgGerarId();
+      produtosConfigurados.push(novoProdutoState);
+    }
+
+    salvarProdutosConfigLocal();
+    fecharNovoProdutoForm();
+    renderProdutosConfig();
+    cfgAtualizarSelectProdutos();
+  }
+
+  function cfgAtualizarSelectsMateria() {
+    // Re-renderiza o builder se estiver aberto, pra refletir novas matérias-primas nos selects
+    if (novoProdutoState) renderReceitaBuilder();
+  }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // INTEGRAÇÃO COM O ORÇAMENTO — categoria "🧩 Produtos Configurados"
+  // ══════════════════════════════════════════════════════════════════════
+  function cfgAtualizarSelectProdutos() {
+    const sel = document.getElementById('config-produto-select');
+    if (!sel) return;
+    const atual = sel.value;
+    if (produtosConfigurados.length === 0) {
+      sel.innerHTML = '<option value="">Nenhum produto configurado — cadastre em ⚙️ Configurações</option>';
+    } else {
+      sel.innerHTML = produtosConfigurados.map(p => '<option value="' + p.id + '">' + escHtml(p.nome) + '</option>').join('');
+      if (produtosConfigurados.some(p => p.id === atual)) sel.value = atual;
+    }
+    setProdutoConfigSelecionado(sel.value);
+  }
+
+  function setProdutoConfigSelecionado(id) {
+    produtoConfigSelecionadoId = id || null;
+    const produto = produtosConfigurados.find(p => p.id === id);
+    const grupoLargAlt = document.getElementById('config-grupo-largalt');
+    const grupoCaixa   = document.getElementById('config-grupo-caixa');
+    if (grupoLargAlt) grupoLargAlt.style.display = (produto && produto.usaLargAlt) ? '' : 'none';
+    if (grupoCaixa)   grupoCaixa.style.display   = (produto && produto.usaCaixa)   ? '' : 'none';
+    const rb = document.getElementById('result-body');
+    if (rb) rb.innerHTML = '<div class="result-empty"><div class="big">🧩</div>Preencha os dados e clique em Calcular.</div>';
+  }
+
+  function calcularProdutoConfigurado() {
+    const produto = produtosConfigurados.find(p => p.id === produtoConfigSelecionadoId);
+    const rb = document.getElementById('result-body');
+    if (!produto) { if (rb) rb.innerHTML = '<div class="result-empty">Escolha um produto configurado.</div>'; return null; }
+
+    const entradas = {
+      largura: parseFloat(document.getElementById('config-largura')?.value) || 0,
+      altura:  parseFloat(document.getElementById('config-altura')?.value)  || 0,
+      caixaM:  parseFloat(document.getElementById('config-caixa')?.value)   || 0
+    };
+    if (produto.usaLargAlt && (entradas.largura <= 0 || entradas.altura <= 0)) {
+      alert('Preencha largura e altura.');
+      return null;
+    }
+
+    const resultados = cfgExecutarReceita(produto, entradas).filter(r => r !== null);
+    let html = '<div class="material-list">';
+    let total = 0;
+    resultados.forEach(r => {
+      total += r.total;
+      html += `<div class="mat-row">
+        <span class="mat-icon">🧩</span>
+        <div class="mat-info">
+          <span class="mat-name">${escHtml(r.nome)}</span>
+          <span class="mat-detail">${fmtQtd(r.qty, 2)} ${escHtml(r.unidade)}${r.extra ? escHtml(r.extra) : ''}</span>
+        </div>
+        <span class="mat-qty">${fmtQtd(r.qty, 2)}</span>
+        <span class="mat-cost">${fmtBRL(r.total)}</span>
+      </div>`;
+    });
+    html += '</div>';
+    html += `<div style="margin-top:10px;padding:10px 14px;background:var(--brand);color:#fff;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:12px;font-weight:600;opacity:.85;">Total de Materiais</span>
+      <span class="total-cfg-value" style="font-size:16px;font-weight:800;">${fmtBRL(total)}</span>
+    </div>`;
+    if (rb) rb.innerHTML = html;
+
+    return { produto, entradas, resultados, total };
+  }
+
+  function addItemConfigurado() {
+    const calc = calcularProdutoConfigurado();
+    if (!calc) return;
+
+    const materiaisEstruturados = calc.resultados.map(r => ({
+      codigo: null,
+      nomePlanilha: r.nome,
+      nomeExibido: r.nome,
+      qtd: r.qty,
+      qtdStr: fmtQtd(r.qty, 2) + (r.unidade ? ' ' + r.unidade : ''),
+      precoUnit: r.precoUnit,
+      total: r.total
+    }));
+
+    const nomeInput = (document.getElementById('config-nome-item')?.value || '').trim();
+    const nomeItem = nomeInput ? nomeInput + ' — ' + calc.produto.nome : calc.produto.nome;
+
+    const item = {
+      id: proximoId++,
+      tipo: 'configurado',
+      categoria: 'configurado',
+      nomeItem,
+      descricao: calc.produto.nome,
+      largura: calc.entradas.largura,
+      alturaVal: calc.entradas.altura,
+      perimetro: calc.produto.usaLargAlt ? (2 * (calc.entradas.largura + calc.entradas.altura)) : 0,
+      caixaCm: calc.entradas.caixaM,
+      usaACM: false,
+      totalTexto: fmtBRL(calc.total),
+      totalNum: calc.total,
+      resultHTML: document.getElementById('result-body').innerHTML,
+      materiaisEstruturados,
+      adesivos: []
+    };
+
+    itensOrcamento.push(item);
+    _orcSalvo = false;
+    salvarProjeto();
+    renderItens();
+
+    ['config-largura', 'config-altura', 'config-caixa', 'config-nome-item'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const rb = document.getElementById('result-body');
+    if (rb) rb.innerHTML = '<div class="result-empty"><div class="big">✅</div>Item adicionado! Preencha os dados do próximo item.</div>';
+  }
+
+  function cfgSetSubView(sub) {
+    const tabM = document.getElementById('cfg-tab-materias');
+    const tabP = document.getElementById('cfg-tab-produtos');
+    const svM  = document.getElementById('cfg-subview-materias');
+    const svP  = document.getElementById('cfg-subview-produtos');
+    if (tabM) tabM.classList.toggle('active', sub === 'materias');
+    if (tabP) tabP.classList.toggle('active', sub === 'produtos');
+    if (svM)  svM.style.display = sub === 'materias' ? '' : 'none';
+    if (svP)  svP.style.display = sub === 'produtos' ? '' : 'none';
+  }
+
 
   function opAtualizarVisibilidade() {
     const fracionado = opGetInput('op-tipo-caminhao') === 'FRACIONADO';
@@ -3256,7 +4031,9 @@
             <div style="font-size:13px;font-weight:700;">Item ${idx + 1} — ${escHtml(item.nomeItem)}</div>
             <div style="font-size:10px;opacity:.75;margin-top:3px;">
               ${item.nomeItem === item.descricao ? escHtml(item.descricao) + ' <span style=\"opacity:.8;margin-left:6px;\">·</span>' : ''}
-              <span style="margin-left:6px;">${item.categoria === 'fachadas'
+              <span style="margin-left:6px;">${item.categoria === 'configurado'
+                ? ((item.largura > 0 && item.alturaVal > 0) ? (fmtQtd(item.largura,2) + 'm × ' + fmtQtd(item.alturaVal,2) + 'm') : 'Produto configurado') + (item.caixaCm > 0 ? ' &nbsp;·&nbsp; Caixa: ' + fmtQtd(item.caixaCm,2) + 'm' : '')
+                : item.categoria === 'fachadas'
                 ? fmtQtd(item.largura,2) + 'm × ' + fmtQtd(item.alturaVal,2) + 'm'
                 : fmtQtd(item.largura,2) + 'm × ' + fmtQtd(item.alturaVal,2) + 'm &nbsp;·&nbsp; Perímetro: ' + fmtQtd(item.perimetro,2) + 'm &nbsp;·&nbsp; Caixa: ' + fmtQtd(item.caixaCm,2) + 'm' + (item.usaACM ? ' &nbsp;·&nbsp; <strong>ACM</strong>' : '')
               }</span>
@@ -4314,10 +5091,12 @@
     const viewLista   = document.getElementById('view-lista');
     const viewOp      = document.getElementById('view-operacional');
     const viewListaOp = document.getElementById('view-lista-operacional');
+    const viewConfig  = document.getElementById('view-config');
     const navOrc      = document.getElementById('nav-orcamento');
     const navLista    = document.getElementById('nav-lista');
     const navOp       = document.getElementById('nav-operacional');
     const navListaOp  = document.getElementById('nav-lista-operacional');
+    const navConfig   = document.getElementById('nav-config');
     const projHeader  = document.getElementById('proj-header-wrap');
     const orcToolbar  = document.getElementById('orc-toolbar-wrap');
     const catSel      = document.getElementById('cat-selector-wrap');
@@ -4327,19 +5106,23 @@
     viewLista.style.display = (view === 'lista')     ? 'block' : 'none';
     if (viewOp)      viewOp.style.display      = (view === 'operacional')       ? 'flex'  : 'none';
     if (viewListaOp) viewListaOp.style.display = (view === 'lista-operacional') ? 'block' : 'none';
+    if (viewConfig)  viewConfig.style.display  = (view === 'config')            ? 'block' : 'none';
 
-    if (projHeader) projHeader.style.display = (view === 'lista' || view === 'lista-operacional') ? 'none' : '';
-    if (orcToolbar) orcToolbar.style.display = (view === 'lista' || view === 'lista-operacional') ? 'none' : '';
+    const viewsSemToolbar = (view === 'lista' || view === 'lista-operacional' || view === 'config');
+    if (projHeader) projHeader.style.display = viewsSemToolbar ? 'none' : '';
+    if (orcToolbar) orcToolbar.style.display = viewsSemToolbar ? 'none' : '';
     if (catSel)     catSel.style.display     = (view === 'orcamento') ? '' : 'none';
 
     navOrc.classList.toggle('active', view === 'orcamento');
     navLista.classList.toggle('active', view === 'lista');
     if (navOp)      navOp.classList.toggle('active', view === 'operacional');
     if (navListaOp) navListaOp.classList.toggle('active', view === 'lista-operacional');
+    if (navConfig)  navConfig.classList.toggle('active', view === 'config');
 
     if (view === 'lista') renderListaRM();
     if (view === 'lista-operacional') renderListaOperacionais();
     if (view === 'operacional') { opAtualizarVisibilidade(); opRenderResultado(); }
+    if (view === 'config') { renderMateriasConfig(); renderProdutosConfig(); cfgAtualizarSelectProdutos(); }
   }
 
   function setCategoria(cat) {
@@ -4350,8 +5133,11 @@
 
     const painelL = document.getElementById('painel-letras');
     const painelF = document.getElementById('painel-fachadas');
+    const painelC = document.getElementById('painel-config');
     if (painelL) painelL.style.display = cat === 'letras'   ? '' : 'none';
     if (painelF) painelF.style.display = cat === 'fachadas' ? '' : 'none';
+    if (painelC) painelC.style.display = cat === 'config'   ? '' : 'none';
+    if (cat === 'config' && typeof cfgAtualizarSelectProdutos === 'function') cfgAtualizarSelectProdutos();
 
     // Mostra/oculta campos de preço específicos
     document.querySelectorAll('.fachada-config').forEach(el => {
@@ -4784,12 +5570,10 @@
     carregarProjeto();
     carregarListaRM();
     carregarListaOperacionais();
-    atualizarArea();
-    carregarPrecosGSheets(true);
-    if (typeof opAtualizarVisibilidade === 'function') opAtualizarVisibilidade();
+    carregarMateriasConfigLocal();
+    carregarProdutosConfigLocal();
     ajustarNavbarHeight();
   });
-
 </script>
 
 </body>
