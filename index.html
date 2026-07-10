@@ -188,12 +188,11 @@
     gap: 8px;
   }
   .card-header .icon { font-size: 16px; }
-  #orc-toolbar-card { overflow: visible; }
   #orc-toolbar-header {
     position: sticky;
     top: var(--navbar-h, 46px);
     z-index: 190;
-    border-radius: 12px 12px 0 0;
+    border-radius: 12px;
     box-shadow: 0 3px 10px rgba(0,0,0,.14);
   }
   .card-body { padding: 20px; }
@@ -1161,7 +1160,18 @@
   </button>
 </nav>
 
-<div id="proj-header-wrap" style="max-width:980px;margin:24px auto 0;padding:0 20px;">
+<div id="orc-toolbar-wrap" style="max-width:980px;margin:24px auto 0;padding:0 20px;">
+  <div class="card-header" id="orc-toolbar-header">
+    <span class="icon">📋</span> Orçamento do Projeto
+    <div style="margin-left:auto;display:flex;align-items:center;">
+      <button onclick="salvarOrcamento(this)" class="btn-salvar-orc">💾 Salvar Orçamento</button>
+      <button onclick="gerarRM()" style="margin-left:8px;background:#E5006C;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📄 Gerar RM</button>
+      <button onclick="novoOrcamento()" title="Fechar orçamento e começar novo" style="margin-left:8px;background:#6b7a90;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">✕ Novo Orçamento</button>
+    </div>
+  </div>
+</div>
+
+<div id="proj-header-wrap" style="max-width:980px;margin:20px auto 0;padding:0 20px;">
   <div class="card">
     <div class="card-header"><span class="icon">🏢</span> Dados do Projeto</div>
     <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;">
@@ -1604,14 +1614,6 @@
 
   <!-- ── Painel de Resultados ── -->
   <div class="card" id="orc-toolbar-card">
-    <div class="card-header" id="orc-toolbar-header">
-      <span class="icon">📋</span> Orçamento do Projeto
-      <div style="margin-left:auto;display:flex;align-items:center;">
-        <button onclick="salvarOrcamento(this)" class="btn-salvar-orc">💾 Salvar Orçamento</button>
-        <button onclick="gerarRM()" style="margin-left:8px;background:#E5006C;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">📄 Gerar RM</button>
-        <button onclick="novoOrcamento()" title="Fechar orçamento e começar novo" style="margin-left:8px;background:#6b7a90;color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;">✕ Novo Orçamento</button>
-      </div>
-    </div>
     <div class="card-body" style="padding:16px;">
       <!-- Lista de itens adicionados -->
       <div id="itens-lista" style="display:none;">
@@ -4317,6 +4319,7 @@
     const navOp       = document.getElementById('nav-operacional');
     const navListaOp  = document.getElementById('nav-lista-operacional');
     const projHeader  = document.getElementById('proj-header-wrap');
+    const orcToolbar  = document.getElementById('orc-toolbar-wrap');
     const catSel      = document.getElementById('cat-selector-wrap');
     if (!viewOrc || !viewLista) return;
 
@@ -4326,6 +4329,7 @@
     if (viewListaOp) viewListaOp.style.display = (view === 'lista-operacional') ? 'block' : 'none';
 
     if (projHeader) projHeader.style.display = (view === 'lista' || view === 'lista-operacional') ? 'none' : '';
+    if (orcToolbar) orcToolbar.style.display = (view === 'lista' || view === 'lista-operacional') ? 'none' : '';
     if (catSel)     catSel.style.display     = (view === 'orcamento') ? '' : 'none';
 
     navOrc.classList.toggle('active', view === 'orcamento');
