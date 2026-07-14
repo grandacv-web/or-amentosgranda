@@ -815,6 +815,35 @@
   }
   #login-overlay.hidden { display: none; }
 
+  .resumo-overlay {
+    position: fixed; inset: 0; background: rgba(15,20,40,.55); z-index: 9998;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .resumo-overlay.hidden { display: none; }
+  .resumo-card {
+    background: #fff; border-radius: 14px; width: 100%; max-width: 640px;
+    max-height: 88vh; overflow-y: auto; box-shadow: 0 24px 70px rgba(0,0,0,.35);
+  }
+  .resumo-header {
+    background: var(--brand); color: #fff; padding: 16px 20px; border-radius: 14px 14px 0 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    position: sticky; top: 0; z-index: 1;
+  }
+  .resumo-header h3 { margin: 0; font-size: 15px; }
+  .resumo-close { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; padding: 0 4px; }
+  .resumo-body { padding: 18px 20px; }
+  .resumo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 16px; font-size: 12.5px; }
+  .resumo-grid .lbl { font-weight: 700; color: var(--brand); text-transform: uppercase; font-size: 10px; letter-spacing: .3px; }
+  .resumo-grid .val { color: var(--text); margin-top: 1px; }
+  .resumo-secao-titulo { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; margin: 16px 0 8px; }
+  .resumo-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 8px; font-size: 12.5px; }
+  .resumo-item-row:nth-child(odd) { background: #f5f6fb; }
+  .resumo-item-row .nome { font-weight: 600; }
+  .resumo-item-row .valor { font-weight: 700; color: var(--brand); white-space: nowrap; margin-left: 10px; }
+  .resumo-footer { display: flex; gap: 10px; padding: 14px 20px 20px; }
+  .rm-row-clickable { cursor: pointer; }
+  .rm-row-clickable:hover { background: #f3f5fb; }
+
   .login-box {
     background: #fff;
     border-radius: 16px;
@@ -1164,11 +1193,9 @@
   </button>
   <button class="nav-tab" onclick="setView('lista')" id="nav-lista">
     📋 Lista de RM
-    <span class="nav-badge" id="lista-badge"></span>
   </button>
   <button class="nav-tab" onclick="setView('lista-operacional')" id="nav-lista-operacional">
     🗂️ Operacionais Salvos
-    <span class="nav-badge" id="lista-operacional-badge"></span>
   </button>
   <button class="nav-tab" onclick="abrirConfiguracoes()" id="nav-config">
     ⚙️ Configurações
@@ -2102,6 +2129,17 @@
   </div>
 </div><!-- /view-config -->
 
+<!-- ── Modal: Resumo (Lista de RM / Operacionais Salvos) ── -->
+<div class="resumo-overlay hidden" id="resumo-overlay" onclick="if(event.target===this) fecharResumoModal()">
+  <div class="resumo-card">
+    <div class="resumo-header">
+      <h3 id="resumo-titulo">Resumo</h3>
+      <button class="resumo-close" onclick="fecharResumoModal()" title="Fechar">✕</button>
+    </div>
+    <div class="resumo-body" id="resumo-body"></div>
+    <div class="resumo-footer" id="resumo-footer"></div>
+  </div>
+</div>
 
 <script>
   // ── Estado global ──────────────────────────────────────────────────────────
@@ -3439,6 +3477,16 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  // Gera um literal JS seguro para embutir dentro de um atributo onclick="..."
+  // (delimitado por aspas duplas). Números viram literal puro; strings (ex: chave
+  // do Firebase) viram literal com aspas simples — nunca use JSON.stringify aqui:
+  // ele envolve strings em aspas DUPLAS, que fecham o atributo HTML antes da hora
+  // e quebram o botão silenciosamente (o clique não faz nada, sem erro visível).
+  function jsArg(v) {
+    if (typeof v === 'number') return String(v);
+    return "'" + String(v).replace(/[^a-zA-Z0-9_-]/g, '') + "'";
   }
 
   // ── Área calculada ─────────────────────────────────────────────────────────
@@ -5080,15 +5128,15 @@
       const pedTag = e.pedido
         ? '<span style="background:#e8edf8;color:var(--brand);border-radius:5px;padding:2px 7px;font-weight:700;">' + e.pedido + '</span>'
         : '<span style="color:var(--muted);">—</span>';
-      const delKey = JSON.stringify(e._fbKey || e.id);
-      html += '<tr>'
+      const delKey = jsArg(e._fbKey || e.id);
+      html += '<tr class="rm-row-clickable" onclick="abrirResumoOperacional(' + delKey + ')" title="Clique para ver o resumo">'
         + '<td style="white-space:nowrap;">' + (e.dataDisplay || e.dataSalvo.slice(0,10)) + '</td>'
         + '<td class="td-empresa">' + (e.empresa || 'Cálculo avulso') + '</td>'
         + '<td style="font-size:11px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (e.job || '—') + '</td>'
         + '<td>' + pedTag + '</td>'
         + '<td style="white-space:nowrap;">' + (local || '—') + '</td>'
         + '<td class="td-total">R$ ' + total + '</td>'
-        + '<td class="td-acoes">'
+        + '<td class="td-acoes" onclick="event.stopPropagation()">'
         + '<button class="btn-lista btn-lista-rm" onclick="gerarPdfOperacionalSalvo(' + e.id + ')">📄 Gerar PDF</button>'
         + '<button class="btn-lista btn-lista-edit" onclick="editarOperacionalSalvo(' + delKey + ')" title="Carregar para edição">✏️ Carregar</button>'
         + '<button class="btn-lista btn-lista-del" onclick="excluirOperacionalSalvo(' + delKey + ')" title="Excluir">🗑️</button>'
@@ -5492,8 +5540,8 @@
       const pedTag = e.pedido
         ? '<span style="background:#e8edf8;color:var(--brand);border-radius:5px;padding:2px 7px;font-weight:700;">' + e.pedido + '</span>'
         : '<span style="color:var(--muted);">—</span>';
-      const delKey = JSON.stringify(e._fbKey || e.id);
-      html += '<tr>'
+      const delKey = jsArg(e._fbKey || e.id);
+      html += '<tr class="rm-row-clickable" onclick="abrirResumoRM(' + delKey + ')" title="Clique para ver o resumo">'
         + '<td style="white-space:nowrap;">' + (e.dataDisplay || e.dataSalvo.slice(0,10)) + '</td>'
         + '<td class="td-empresa">' + (e.empresa || '—') + '</td>'
         + '<td style="font-size:11px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (e.job || '—') + '</td>'
@@ -5501,7 +5549,7 @@
         + '<td style="white-space:nowrap;">' + (local || '—') + '</td>'
         + '<td class="td-c">' + nItens + '</td>'
         + '<td class="td-total">R$ ' + total + '</td>'
-        + '<td class="td-acoes">'
+        + '<td class="td-acoes" onclick="event.stopPropagation()">'
         + '<button class="btn-lista btn-lista-rm" onclick="gerarRMSalvo(' + e.id + ')">📄 Gerar RM</button>'
         + '<button class="btn-lista btn-lista-edit" onclick="editarRMSalvo(' + delKey + ')" title="Editar orçamento">✏️ Editar</button>'
         + '<button class="btn-lista btn-lista-del" onclick="excluirRMSalvo(' + delKey + ')" title="Excluir">🗑️</button>'
@@ -5513,6 +5561,95 @@
     html += '<div style="margin-top:12px;text-align:right;font-size:12px;color:var(--muted);">'
       + lista.length + ' orçamento(s) — Total filtrado: <strong style="color:var(--brand);">R$ ' + totalFiltrado + '</strong></div>';
     container.innerHTML = html;
+  }
+
+  // ── Modal de Resumo (Lista de RM + Operacionais Salvos) ────────────────────
+  function fecharResumoModal() {
+    const overlay = document.getElementById('resumo-overlay');
+    if (overlay) overlay.classList.add('hidden');
+  }
+
+  function abrirResumoRM(fbKeyOrId) {
+    const entry = savedRMList.find(e => e._fbKey === fbKeyOrId || String(e.id) === String(fbKeyOrId));
+    if (!entry) { alert('Orçamento não encontrado.'); return; }
+
+    const local = (entry.cidade || '') + (entry.estado ? ' / ' + entry.estado : '');
+    const itens = entry.itensOrcamento || [];
+    const itensHTML = itens.map(it => {
+      const precoFinal = (typeof calcPrecoFinal === 'function') ? calcPrecoFinal(it.totalNum || 0, it.cmv) : (it.totalNum || 0);
+      return '<div class="resumo-item-row"><span class="nome">' + escHtml(it.nomeItem || it.descricao || 'Item') + '</span>'
+        + '<span class="valor">' + fmtBRL(precoFinal) + '</span></div>';
+    }).join('') || '<div style="color:var(--muted);font-size:12px;">Nenhum item.</div>';
+
+    const opR         = entry.custosOperacionais;
+    const instConta    = entry.opInputs && entry.opInputs['orc-instalacao-conta'] === 'SIM';
+    const freteConta   = entry.opInputs && entry.opInputs['orc-frete-conta']      === 'SIM';
+    const rotuloOp     = [instConta ? 'Instalação/Mobilização/Extras' : '', freteConta ? 'Frete' : ''].filter(Boolean).join(' + ') + ' (nossa conta)';
+    const totalOp      = (instConta ? (opR?.totalInstalacao || 0) : 0) + (freteConta ? (opR?.totalFrete || 0) : 0);
+
+    document.getElementById('resumo-titulo').textContent = '📋 Resumo do Orçamento';
+    document.getElementById('resumo-body').innerHTML = `
+      <div class="resumo-grid">
+        <div><div class="lbl">Empresa</div><div class="val">${escHtml(entry.empresa || '—')}</div></div>
+        <div><div class="lbl">Solicitante</div><div class="val">${escHtml(entry.solicitante || '—')}</div></div>
+        <div><div class="lbl">Cidade / UF</div><div class="val">${escHtml(local || '—')}</div></div>
+        <div><div class="lbl">Job</div><div class="val">${escHtml(entry.job || '—')}</div></div>
+        <div><div class="lbl">Nº Pedido</div><div class="val">${escHtml(entry.pedido || '—')}</div></div>
+        <div><div class="lbl">Data</div><div class="val">${escHtml(entry.dataDisplay || (entry.dataSalvo || '').slice(0,10))}</div></div>
+      </div>
+      <div class="resumo-secao-titulo">Itens do orçamento (${itens.length})</div>
+      ${itensHTML}
+      ${(instConta || freteConta) ? `
+        <div class="resumo-secao-titulo">Custos Operacionais</div>
+        <div class="resumo-item-row"><span class="nome">${escHtml(rotuloOp)}</span><span class="valor">${fmtBRL(totalOp)}</span></div>
+      ` : ''}
+      <div class="total-box" style="margin-top:14px;">
+        <div><div class="label">Total do Orçamento</div></div>
+        <div class="value">${fmtBRL(entry.totalNum || 0)}</div>
+      </div>
+    `;
+    document.getElementById('resumo-footer').innerHTML = `
+      <button class="btn-lista btn-lista-rm"   onclick="fecharResumoModal(); gerarRMSalvo(${entry.id})">📄 Gerar RM</button>
+      <button class="btn-lista btn-lista-edit" onclick="fecharResumoModal(); editarRMSalvo(${jsArg(fbKeyOrId)})">✏️ Editar</button>
+      <button class="btn-lista btn-lista-del"  onclick="fecharResumoModal(); excluirRMSalvo(${jsArg(fbKeyOrId)})">🗑️ Excluir</button>
+    `;
+    document.getElementById('resumo-overlay').classList.remove('hidden');
+  }
+
+  function abrirResumoOperacional(fbKeyOrId) {
+    const entry = savedOperacionaisList.find(e => e._fbKey === fbKeyOrId || String(e.id) === String(fbKeyOrId));
+    if (!entry) { alert('Registro não encontrado.'); return; }
+
+    const local = (entry.cidade || '') + (entry.estado ? ' / ' + entry.estado : '');
+    const itens = (entry.resultado && entry.resultado.itens) || [];
+    const itensHTML = itens.map(it =>
+      '<div class="resumo-item-row"><span class="nome">' + escHtml(it.nome || '') + '</span>'
+      + '<span class="valor">' + fmtBRL(it.valor || 0) + '</span></div>'
+    ).join('') || '<div style="color:var(--muted);font-size:12px;">Sem itens.</div>';
+
+    document.getElementById('resumo-titulo').textContent = '🚚 Resumo de Custos Operacionais';
+    document.getElementById('resumo-body').innerHTML = `
+      <div class="resumo-grid">
+        <div><div class="lbl">Empresa</div><div class="val">${escHtml(entry.empresa || 'Cálculo avulso')}</div></div>
+        <div><div class="lbl">Solicitante</div><div class="val">${escHtml(entry.solicitante || '—')}</div></div>
+        <div><div class="lbl">Cidade / UF</div><div class="val">${escHtml(local || '—')}</div></div>
+        <div><div class="lbl">Job</div><div class="val">${escHtml(entry.job || '—')}</div></div>
+        <div><div class="lbl">Nº Pedido</div><div class="val">${escHtml(entry.pedido || '—')}</div></div>
+        <div><div class="lbl">Data</div><div class="val">${escHtml(entry.dataDisplay || (entry.dataSalvo || '').slice(0,10))}</div></div>
+      </div>
+      <div class="resumo-secao-titulo">Itens (${itens.length})</div>
+      ${itensHTML}
+      <div class="total-box" style="margin-top:14px;">
+        <div><div class="label">Total de Custos Operacionais</div></div>
+        <div class="value">${fmtBRL((entry.resultado && entry.resultado.total) || entry.totalNum || 0)}</div>
+      </div>
+    `;
+    document.getElementById('resumo-footer').innerHTML = `
+      <button class="btn-lista btn-lista-rm"   onclick="fecharResumoModal(); gerarPdfOperacionalSalvo(${entry.id})">📄 Gerar PDF</button>
+      <button class="btn-lista btn-lista-edit" onclick="fecharResumoModal(); editarOperacionalSalvo(${jsArg(fbKeyOrId)})">✏️ Carregar</button>
+      <button class="btn-lista btn-lista-del"  onclick="fecharResumoModal(); excluirOperacionalSalvo(${jsArg(fbKeyOrId)})">🗑️ Excluir</button>
+    `;
+    document.getElementById('resumo-overlay').classList.remove('hidden');
   }
 
   function limparFiltrosLista() {
