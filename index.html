@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Orçamentação Granda — Letras Caixas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
 
@@ -109,34 +112,53 @@
     --brand-light: #2a3f9e;
     --accent:      #E5006C;
     --accent-dark: #b8004f;
-    --bg:          #f4f6f9;
+    --bg:          #f6f7fb;
     --card:        #ffffff;
-    --border:      #dde3ec;
-    --text:        #1e2a38;
-    --muted:       #6b7a90;
+    --border:      #e7eaf2;
+    --border-soft: #eef0f6;
+    --text:        #26324a;
+    --muted:       #8189a0;
     --green:       #1B6E3B;
     --green-bg:    #e6f4ec;
     --red:         #c0392b;
+    --brand-tint:   rgba(27,43,110,.055);
+    --brand-tint-2: rgba(27,43,110,.09);
+    --accent-tint:  rgba(229,0,108,.07);
+    --radius:      20px;
+    --radius-sm:   14px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 1px 3px rgba(20,30,60,.06);
+    --shadow-md: 0 10px 26px rgba(20,30,60,.09);
+    --shadow-lg: 0 18px 40px rgba(27,43,110,.16);
+    --grad-brand:  linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+    --grad-accent: linear-gradient(135deg, var(--accent) 0%, #ff2e8e 100%);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c7cee0; border-radius: 20px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a8b2cc; }
 
   /* ── Header ── */
   header {
     background: #fff;
     border-bottom: 3px solid var(--accent);
-    padding: 14px 32px;
+    padding: 16px 32px;
     display: flex;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.10);
+    box-shadow: var(--shadow-sm);
   }
   header .logo-wrap { display: flex; align-items: center; }
   header .divider {
@@ -169,43 +191,74 @@
   }
   #cat-selector-wrap { max-width: 980px; }
 
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   .card {
     background: var(--card);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
+    animation: fadeInUp .35s ease;
   }
   .card-header {
-    background: var(--brand);
-    color: #fff;
-    padding: 14px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: .3px;
+    background: #fff;
+    color: var(--brand);
+    padding: 16px 20px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: .1px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
+    border-bottom: 1px solid var(--border-soft);
   }
-  .card-header .icon { font-size: 16px; }
+  .card-header .icon {
+    font-size: 15px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-tint);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  #orc-toolbar-header .icon,
+  #op-toolbar-header .icon {
+    background: rgba(255,255,255,.18);
+  }
+  /* Barras de ação fixas (toolbars sticky) continuam com o preenchimento azul
+     sólido — são as únicas 1-2 por tela, então mantêm destaque sem pesar
+     no restante da interface, que agora é clara. */
+  #orc-toolbar-header,
+  #op-toolbar-header {
+    background: var(--brand);
+    color: #fff;
+    border-bottom: none;
+  }
   #orc-toolbar-header {
     position: sticky;
     top: var(--navbar-h, 46px);
     z-index: 190;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,.14);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
   }
-  .card-body { padding: 20px; }
+  .card-body { padding: 22px; }
 
   .full-width { grid-column: 1 / -1; }
 
   /* ── Tipo selector ── */
   .tipo-tabs {
     display: flex;
-    gap: 0;
-    border-radius: 8px;
+    gap: 4px;
+    border-radius: var(--radius-pill);
     overflow: hidden;
-    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 4px;
     margin-bottom: 20px;
   }
   .tipo-tab {
@@ -215,20 +268,20 @@
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    background: #f8f9fb;
+    background: transparent;
     border: none;
+    border-radius: var(--radius-pill);
     color: var(--muted);
     transition: all .18s;
-    border-right: 1px solid var(--border);
     line-height: 1.3;
   }
-  .tipo-tab:last-child { border-right: none; }
   .tipo-tab.active {
-    background: var(--brand);
+    background: var(--grad-brand);
     color: #fff;
+    box-shadow: 0 4px 12px rgba(27,43,110,.25);
   }
   .tipo-tab:hover:not(.active) {
-    background: #eaf0f8;
+    background: #fff;
     color: var(--brand);
   }
   .tipo-tab .badge {
@@ -276,11 +329,11 @@
   }
   .adesivo-row select {
     flex: 1;
-    padding: 7px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
+    padding: 8px 34px 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
     font-size: 12px;
-    background: #fff;
+    background-color: #fff;
     color: var(--text);
   }
   .btn-remove-adesivo {
@@ -333,12 +386,12 @@
   }
   label {
     display: block;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    margin-bottom: 6px;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 7px;
   }
   .input-wrap {
     position: relative;
@@ -347,13 +400,13 @@
   }
   input[type="number"] {
     width: 100%;
-    padding: 10px 48px 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    padding: 11px 48px 11px 13px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 15px;
     color: var(--text);
-    background: #fafbfc;
-    transition: border-color .15s;
+    background: var(--bg);
+    transition: border-color .15s, background .15s;
     -moz-appearance: textfield;
   }
   input[type="number"]::-webkit-outer-spin-button,
@@ -363,6 +416,29 @@
     border-color: var(--brand-light);
     background: #fff;
   }
+
+  /* ── Selects — aparência unificada com seta customizada, em vez do
+     estilo nativo do navegador (que varia e destoa do resto do sistema) ── */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    padding: 10px 34px 10px 12px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%238189a0'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+  }
+  select:focus { outline: none; border-color: var(--brand-light); background-color: #fff; }
+  select:hover { background-color: #eef0f6; }
   .unit {
     position: absolute;
     right: 12px;
@@ -380,20 +456,21 @@
   /* ── Botão calcular ── */
   .btn-calc {
     width: 100%;
-    padding: 13px;
-    background: var(--accent);
+    padding: 15px;
+    background: var(--grad-accent);
     color: #fff;
     font-size: 15px;
     font-weight: 700;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
     letter-spacing: .3px;
-    transition: background .15s, transform .1s;
+    box-shadow: 0 8px 20px rgba(229,0,108,.28);
+    transition: transform .15s, box-shadow .15s;
     margin-top: 4px;
   }
-  .btn-calc:hover { background: var(--accent-dark); }
-  .btn-calc:active { transform: scale(.98); }
+  .btn-calc:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(229,0,108,.36); }
+  .btn-calc:active { transform: translateY(0) scale(.98); }
 
   /* ── Resultados ── */
   .result-empty {
@@ -458,10 +535,11 @@
   /* ── Total ── */
   .total-box {
     margin-top: 16px;
-    padding: 16px;
-    border-radius: 10px;
-    border: 2px solid var(--brand);
-    background: var(--brand);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--grad-brand);
+    box-shadow: var(--shadow-lg);
     color: #fff;
     display: flex;
     align-items: center;
@@ -585,104 +663,116 @@
   /* ── Projeto inputs ── */
   #proj-empresa, #proj-solicitante, #proj-cidade {
     width: 100%;
-    padding: 8px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    padding: 9px 11px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background: #fff;
+    background: var(--bg);
     box-sizing: border-box;
     margin-top: 4px;
+    transition: border-color .15s, background .15s;
   }
   #proj-empresa:focus, #proj-solicitante:focus, #proj-cidade:focus {
     outline: none;
-    border-color: var(--brand);
+    border-color: var(--brand-light);
+    background: #fff;
   }
   #proj-estado {
-    width: 70px;
-    padding: 8px 6px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    width: 78px;
+    padding: 9px 30px 9px 10px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background: #fff;
+    background-color: var(--bg);
     margin-top: 4px;
+    transition: border-color .15s, background .15s;
   }
-  #proj-estado:focus { outline: none; border-color: var(--brand); }
+  #proj-estado:focus { outline: none; border-color: var(--brand-light); background-color: #fff; }
   #proj-job, #proj-pedido {
     width: 100%;
-    padding: 8px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    padding: 9px 11px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background: #fff;
+    background: var(--bg);
     box-sizing: border-box;
     margin-top: 4px;
+    transition: border-color .15s, background .15s;
   }
-  #proj-job:focus, #proj-pedido:focus { outline: none; border-color: var(--brand); }
+  #proj-job:focus, #proj-pedido:focus { outline: none; border-color: var(--brand-light); background: #fff; }
   #nome-item {
     width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    padding: 11px 13px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
-    background: #fafbfc;
+    background: var(--bg);
     box-sizing: border-box;
     margin-top: 4px;
+    transition: border-color .15s, background .15s;
   }
   #nome-item:focus { outline: none; border-color: var(--brand-light); background: #fff; }
   #fach-nome-item {
     width: 100%;
-    padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    padding: 11px 13px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
-    background: #fafbfc;
+    background: var(--bg);
     box-sizing: border-box;
     margin-top: 4px;
+    transition: border-color .15s, background .15s;
   }
   #fach-nome-item:focus { outline: none; border-color: var(--brand-light); background: #fff; }
 
   /* ── Navegação principal ── */
   .nav-bar {
     background: #fff;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 1px solid var(--border-soft);
     display: flex;
     align-items: center;
-    padding: 0 32px;
-    gap: 0;
+    padding: 10px 32px;
+    gap: 6px;
     position: sticky;
     top: 0;
     z-index: 200;
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    box-shadow: var(--shadow-sm);
   }
   .nav-tab {
-    padding: 13px 22px;
+    padding: 10px 18px;
     font-size: 13px;
     font-weight: 600;
     color: var(--muted);
     border: none;
     background: none;
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    transition: color .15s, border-color .15s;
+    border-radius: var(--radius-pill);
+    border-bottom: none;
+    margin-bottom: 0;
+    transition: color .15s, background .18s, box-shadow .18s, transform .12s;
     display: flex;
     align-items: center;
     gap: 7px;
   }
-  .nav-tab:hover { color: var(--brand); }
-  .nav-tab.active { color: var(--brand); border-bottom-color: var(--accent); }
+  .nav-tab:hover { color: var(--brand); background: var(--brand-tint); transform: translateY(-1px); }
+  .nav-tab.active {
+    color: #fff;
+    background: var(--grad-brand);
+    box-shadow: 0 6px 16px rgba(27,43,110,.28);
+  }
+  .nav-tab.active:hover { transform: none; }
   .nav-badge {
     background: var(--accent);
     color: #fff;
@@ -733,7 +823,7 @@
   .btn-filtro-limpar:hover { border-color: var(--brand); color: var(--brand); }
 
   /* ── Tabela ── */
-  .rm-table-wrap { overflow-x: auto; border-radius: 12px; box-shadow: 0 2px 14px rgba(0,0,0,.07); }
+  .rm-table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow-md); }
   .rm-table {
     width: 100%;
     border-collapse: collapse;
@@ -741,9 +831,9 @@
     font-size: 12px;
   }
   .rm-table th {
-    background: var(--brand);
+    background: var(--grad-brand);
     color: #fff;
-    padding: 11px 14px;
+    padding: 13px 16px;
     text-align: left;
     font-size: 11px;
     font-weight: 700;
@@ -753,27 +843,27 @@
   .rm-table th.r { text-align: right; }
   .rm-table th.c { text-align: center; }
   .rm-table td {
-    padding: 11px 14px;
-    border-bottom: 1px solid var(--border);
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border-soft);
     vertical-align: middle;
   }
   .rm-table tbody tr:last-child td { border-bottom: none; }
-  .rm-table tbody tr:hover td { background: #f5f7ff; }
+  .rm-table tbody tr:hover td { background: var(--brand-tint); }
   .rm-table .td-empresa { font-weight: 700; color: var(--brand); }
   .rm-table .td-total { font-weight: 700; text-align: right; white-space: nowrap; }
   .rm-table .td-c { text-align: center; }
   .rm-table .td-acoes { white-space: nowrap; }
   .btn-lista {
-    padding: 5px 11px;
+    padding: 6px 13px;
     font-size: 11px;
     font-weight: 700;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: opacity .15s;
+    transition: transform .12s, opacity .15s;
   }
-  .btn-lista:hover { opacity: .82; }
-  .btn-lista-rm   { background: var(--accent); color: #fff; }
+  .btn-lista:hover { opacity: .88; transform: translateY(-1px); }
+  .btn-lista-rm   { background: var(--grad-accent); color: #fff; }
   .btn-lista-edit { background: #fff3e0; color: #b86000; margin-left: 4px; border: 1px solid #f5c07a; }
   .btn-lista-del  { background: #fde8e8; color: var(--red); margin-left: 4px; }
 
@@ -789,24 +879,27 @@
   /* ── Btn Salvar ── */
   .btn-salvar-orc {
     margin-left: 8px;
-    background: var(--brand);
+    background: var(--grad-brand);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    padding: 7px 16px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     letter-spacing: .3px;
-    transition: background .15s;
+    transition: transform .12s, box-shadow .15s;
   }
-  .btn-salvar-orc:hover { background: var(--brand-light); }
+  .btn-salvar-orc:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(27,43,110,.28); }
 
   /* ── Tela de Login ── */
   #login-overlay {
     position: fixed;
     inset: 0;
-    background: var(--brand);
+    background:
+      radial-gradient(circle at 22% 18%, rgba(27,43,110,.12), transparent 55%),
+      radial-gradient(circle at 82% 85%, rgba(229,0,108,.10), transparent 50%),
+      var(--bg);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -845,29 +938,38 @@
   .rm-row-clickable:hover { background: #f3f5fb; }
 
   .login-box {
+    position: relative;
     background: #fff;
-    border-radius: 16px;
-    padding: 40px 40px 36px;
+    border-radius: 20px;
+    padding: 44px 40px 36px;
     width: 100%;
     max-width: 380px;
-    box-shadow: 0 20px 60px rgba(0,0,0,.30);
+    box-shadow: 0 24px 60px rgba(27,43,110,.14);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0;
+    overflow: hidden;
+  }
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
   }
   .login-logo { margin-bottom: 28px; }
   .login-title {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--brand);
     margin-bottom: 6px;
-    letter-spacing: .2px;
+    letter-spacing: .1px;
   }
   .login-sub {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--muted);
-    margin-bottom: 28px;
+    margin-bottom: 26px;
     text-align: center;
   }
   .login-input-wrap {
@@ -878,19 +980,19 @@
   .login-input-wrap input {
     width: 100%;
     padding: 13px 44px 13px 16px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 15px;
     font-family: inherit;
     color: var(--text);
-    background: #fafbfc;
+    background: var(--bg);
     box-sizing: border-box;
-    transition: border-color .15s;
+    transition: border-color .15s, background .15s;
     letter-spacing: .5px;
   }
   .login-input-wrap input:focus {
     outline: none;
-    border-color: var(--brand);
+    border-color: var(--brand-light);
     background: #fff;
   }
   .login-input-wrap input.erro { border-color: var(--accent); }
@@ -910,16 +1012,17 @@
     background: var(--accent);
     color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     font-family: inherit;
     letter-spacing: .3px;
-    transition: background .15s, transform .1s;
+    box-shadow: 0 4px 14px rgba(229,0,108,.25);
+    transition: background .15s, transform .1s, box-shadow .15s;
     margin-bottom: 12px;
   }
-  .login-btn:hover { background: var(--accent-dark); }
+  .login-btn:hover { background: var(--accent-dark); box-shadow: 0 4px 16px rgba(229,0,108,.32); }
   .login-btn:active { transform: scale(.98); }
   .login-erro {
     font-size: 12px;
@@ -931,7 +1034,7 @@
   .login-rodape {
     margin-top: 32px;
     font-size: 11px;
-    color: rgba(255,255,255,.45);
+    color: var(--muted);
     text-align: center;
   }
 
@@ -950,10 +1053,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 22px 14px 18px;
-    border-radius: 10px;
-    border: 2px solid var(--border);
-    background: #f8f9fb;
+    padding: 24px 14px 20px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border-soft);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition: all .18s;
     text-align: center;
@@ -962,21 +1066,37 @@
     font-family: inherit;
   }
   .cat-card:not([disabled]):hover {
-    border-color: var(--brand);
-    background: #eef2fa;
+    border-color: var(--brand-light);
+    background: var(--brand-tint);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
   }
+  .cat-card:not([disabled]):hover .cat-icon { background: #fff; box-shadow: var(--shadow-sm); }
   .cat-card.active {
     border-color: var(--brand);
-    background: var(--brand);
+    background: var(--grad-brand);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(27,43,110,.20);
+    box-shadow: 0 10px 24px rgba(27,43,110,.28);
   }
+  .cat-card.active .cat-icon { background: rgba(255,255,255,.18); }
   .cat-card[disabled] { opacity: .5; cursor: not-allowed; }
-  .cat-card .cat-icon { font-size: 30px; line-height:1; }
+  .cat-card .cat-icon {
+    font-size: 26px;
+    line-height: 1;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--brand-tint);
+    margin-bottom: 4px;
+    transition: background .18s, box-shadow .18s;
+  }
   .cat-card .cat-name {
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: .6px;
+    letter-spacing: .5px;
     text-transform: uppercase;
     color: inherit;
     margin-top: 2px;
@@ -1022,47 +1142,50 @@
   .op-card input[type="number"] {
     width: 100%;
     padding: 10px 12px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
     font-size: 13px;
     color: var(--text);
-    background: #fafbfc;
+    background-color: var(--bg);
+    transition: border-color .15s, background .15s;
     -moz-appearance: textfield;
   }
-  .op-card select:focus, .op-card input:focus { outline: none; border-color: var(--brand-light); background: #fff; }
+  .op-card select { padding: 10px 34px 10px 12px; }
+  .op-card select:focus, .op-card input:focus { outline: none; border-color: var(--brand-light); background-color: #fff; }
   .op-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
   .valor-preview { font-size: 13px; font-weight: 700; color: var(--brand); margin-top: 4px; min-height: 16px; }
   .op-status { font-size: 11px; margin-top: 6px; color: var(--muted); }
   .op-btn-mini {
-    background: #eaf0f8;
-    border: 1px solid var(--border);
+    background: var(--brand-tint);
+    border: 1px solid transparent;
     color: var(--brand);
-    border-radius: 7px;
-    padding: 8px 12px;
+    border-radius: var(--radius-pill);
+    padding: 8px 14px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    transition: background .15s;
+    transition: background .15s, transform .12s;
   }
-  .op-btn-mini:hover { background: var(--brand); color: #fff; }
+  .op-btn-mini:hover { background: var(--brand); color: #fff; transform: translateY(-1px); }
   .op-elevacao-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; align-items: end; margin-bottom: 12px; }
   .op-elevacao-row:last-child { margin-bottom: 0; }
   .op-btn-calc {
     width: 100%;
-    padding: 13px;
-    background: var(--brand);
+    padding: 14px;
+    background: var(--grad-brand);
     color: #fff;
     font-size: 14px;
     font-weight: 700;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
     letter-spacing: .3px;
+    box-shadow: 0 8px 20px rgba(27,43,110,.22);
     margin-top: 6px;
-    transition: background .15s;
+    transition: transform .15s, box-shadow .15s;
   }
-  .op-btn-calc:hover { background: var(--brand-light); }
+  .op-btn-calc:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(27,43,110,.3); }
 
   /* ── Header "Resultado — Custos Operacionais" — botões mais visíveis ── */
   .op-resultado-header { flex-wrap: wrap; gap: 10px; }
@@ -1074,27 +1197,27 @@
     padding: 8px 16px;
     font-size: 12.5px;
   }
-  .op-resultado-header .btn-salvar-orc:hover { background: rgba(255,255,255,.26); }
+  .op-resultado-header .btn-salvar-orc:hover { background: rgba(255,255,255,.26); transform: translateY(-1px); box-shadow: none; }
   #op-toolbar-header {
     position: sticky;
     top: var(--navbar-h, 46px);
     z-index: 190;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0,0,0,.14);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
   }
   .op-btn-pdf {
-    background: var(--accent);
+    background: var(--grad-accent);
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    padding: 8px 18px;
     font-size: 12.5px;
     font-weight: 700;
     cursor: pointer;
     letter-spacing: .3px;
-    transition: background .15s;
+    transition: transform .12s, box-shadow .15s;
   }
-  .op-btn-pdf:hover { background: var(--accent-dark); }
+  .op-btn-pdf:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(229,0,108,.35); }
 
   /* ── Resultado Custos Operacionais — cards de resumo + lista compacta ── */
   .op-stat-grid {
@@ -1104,30 +1227,32 @@
     margin-bottom: 16px;
   }
   .op-stat-card {
-    background: #f8f9fb;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
+    background: var(--brand-tint);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 13px 15px;
+    transition: transform .15s, box-shadow .15s;
   }
+  .op-stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .op-stat-label { font-size: 11.5px; color: var(--muted); font-weight: 600; }
-  .op-stat-value { font-size: 17px; font-weight: 800; color: var(--brand); margin-top: 4px; }
+  .op-stat-value { font-size: 18px; font-weight: 800; color: var(--brand); margin-top: 4px; }
 
   .op-compact-list {
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
     overflow: hidden;
   }
-  .op-compact-item { border-bottom: 1px solid var(--border); }
+  .op-compact-item { border-bottom: 1px solid var(--border-soft); }
   .op-compact-item:last-child { border-bottom: none; }
   .op-compact-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 14px;
+    padding: 11px 14px;
     cursor: pointer;
     transition: background .12s;
   }
-  .op-compact-row:hover { background: #f8f9fb; }
+  .op-compact-row:hover { background: var(--brand-tint); }
   .op-compact-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .op-compact-icon { font-size: 14px; flex-shrink: 0; }
   .op-compact-name { font-size: 12.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1141,6 +1266,70 @@
     line-height: 1.5;
   }
   .op-compact-hint { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+
+  /* ── Custos Operacionais — acordeão (blocos colapsáveis) ── */
+  .op-acc {
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .op-acc:last-of-type { margin-bottom: 4px; }
+  .op-acc-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background .12s;
+  }
+  .op-acc-header:hover { background: #f0f3f9; }
+  .op-acc.open .op-acc-header { background: var(--brand-tint); border-bottom-color: var(--border-soft); }
+  .op-acc-icon { font-size: 15px; flex-shrink: 0; }
+  .op-acc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand);
+    text-transform: none;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .op-acc-summary {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
+    padding-right: 6px;
+  }
+  .op-acc.open .op-acc-summary { color: var(--brand); }
+  .op-acc-chevron { font-size: 11px; color: var(--muted); transition: transform .2s; flex-shrink: 0; }
+  .op-acc.open .op-acc-chevron { transform: rotate(180deg); }
+  .op-acc-body { display: none; padding: 18px 16px 4px; }
+  .op-acc.open .op-acc-body { display: block; }
+
+  /* ── Total ao vivo na toolbar sticky ── */
+  .op-toolbar-total {
+    margin-left: auto;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+  .op-toolbar-total .op-toolbar-total-lbl { font-size: 10px; font-weight: 600; opacity: .8; text-transform: uppercase; margin-right: 6px; letter-spacing: .3px; }
 
 </style>
 </head>
@@ -1801,6 +1990,7 @@
 
   <div class="card-header op-resultado-header" id="op-toolbar-header">
     <span class="icon">📊</span> Resultado — Custos Operacionais
+    <span class="op-toolbar-total" id="op-toolbar-total" style="display:none;"><span class="op-toolbar-total-lbl">Total</span><span id="op-toolbar-total-valor">R$ 0,00</span></span>
     <div class="op-resultado-actions">
       <button onclick="salvarOperacionais(this)" class="btn-salvar-orc">💾 Salvar Operacionais</button>
       <button onclick="gerarPdfOperacionais()" class="op-btn-pdf">📄 Gerar PDF</button>
@@ -1816,8 +2006,14 @@
         seguindo as regras da planilha de parâmetros de instalação. Origem fixa: <strong>Ponta Grossa/PR</strong>.
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">📍 Localização e Distância</div>
+      <div class="op-acc open" id="op-acc-localizacao">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-localizacao')">
+          <span class="op-acc-icon">📍</span>
+          <span class="op-acc-title">Localização e Distância</span>
+          <span class="op-acc-summary" id="op-acc-resumo-localizacao">preencher</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-grid">
           <div class="form-group">
             <label>Cidade / UF do destino</label>
@@ -1832,10 +2028,17 @@
           </div>
         </div>
         <div class="op-status" id="op-distancia-status">Calculado automaticamente assim que cidade e UF forem preenchidos em "Dados do Projeto". Use o botão só para recalcular manualmente.</div>
+        </div>
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">💰 Condições Comerciais</div>
+      <div class="op-acc open" id="op-acc-comerciais">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-comerciais')">
+          <span class="op-acc-icon">💰</span>
+          <span class="op-acc-title">Condições Comerciais</span>
+          <span class="op-acc-summary" id="op-acc-resumo-comerciais">preencher</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-grid">
           <div class="form-group">
             <label>Valor do pedido (venda) <span style="font-weight:400;text-transform:none;">— R$</span></label>
@@ -1871,10 +2074,17 @@
             <div class="valor-preview" id="preview-op-valor-fracionado">R$ 0,00</div>
           </div>
         </div>
+        </div>
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">✈️ Deslocamento de Equipe</div>
+      <div class="op-acc" id="op-acc-deslocamento">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-deslocamento')">
+          <span class="op-acc-icon">✈️</span>
+          <span class="op-acc-title">Deslocamento de Equipe</span>
+          <span class="op-acc-summary" id="op-acc-resumo-deslocamento">rodoviário</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-hint" style="margin-bottom:10px;">Use passagem aérea normalmente para distâncias acima de 2.000km.</div>
         <div class="op-grid">
           <div class="form-group">
@@ -1900,10 +2110,17 @@
             <input type="number" id="op-km-aeroporto" min="0" step="1" oninput="calcularCustosOperacionais()">
           </div>
         </div>
+        </div>
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">🏗️ Elevação (Munck, Guindaste, Andaime...)</div>
+      <div class="op-acc" id="op-acc-elevacao">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-elevacao')">
+          <span class="op-acc-icon">🏗️</span>
+          <span class="op-acc-title">Elevação (Munck, Guindaste, Andaime...)</span>
+          <span class="op-acc-summary" id="op-acc-resumo-elevacao">nenhuma</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-elevacao-row">
           <div class="form-group">
             <label>Tipo de elevação 1</label>
@@ -1949,10 +2166,17 @@
             <input type="number" id="op-elevacao-pta-3" min="0" step="10" oninput="calcularCustosOperacionais()">
             <div class="valor-preview" id="preview-op-elevacao-pta-3">R$ 0,00</div></div>
         </div>
+        </div>
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">🔲 Revestimento em ACM (instalação)</div>
+      <div class="op-acc" id="op-acc-acm">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-acm')">
+          <span class="op-acc-icon">🔲</span>
+          <span class="op-acc-title">Revestimento em ACM (instalação)</span>
+          <span class="op-acc-summary" id="op-acc-resumo-acm">nenhum</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-grid">
           <div class="form-group">
             <label>Área de ACM <span style="font-weight:400;text-transform:none;">— m²</span></label>
@@ -1962,10 +2186,17 @@
             <button type="button" class="op-btn-mini" onclick="opEstimarM2ACM()">🔄 Somar m² de ACM já usados no orçamento</button>
           </div>
         </div>
+        </div>
       </div>
 
-      <div class="op-section">
-        <div class="op-section-title">🧾 Serviços Extras</div>
+      <div class="op-acc" id="op-acc-extras">
+        <button type="button" class="op-acc-header" onclick="opToggleAccordion('op-acc-extras')">
+          <span class="op-acc-icon">🧾</span>
+          <span class="op-acc-title">Serviços Extras</span>
+          <span class="op-acc-summary" id="op-acc-resumo-extras">nenhum</span>
+          <span class="op-acc-chevron">▾</span>
+        </button>
+        <div class="op-acc-body">
         <div class="op-grid">
           <div class="form-group"><label>Plano de Rigging</label>
             <select id="op-plano-rigging" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
@@ -1976,6 +2207,7 @@
           <div class="form-group"><label>Seguro de obra</label>
             <select id="op-seguro-obra" onchange="calcularCustosOperacionais()"><option value="NÃO">NÃO</option><option value="SIM">SIM</option></select></div>
         </div>
+        </div>
       </div>
 
       <button type="button" class="op-btn-calc" onclick="calcularCustosOperacionais()">🧮 Recalcular Custos Operacionais</button>
@@ -1983,6 +2215,7 @@
   </div>
 
   <div class="card">
+    <div class="card-header"><span class="icon">📊</span> Detalhamento do Cálculo</div>
     <div class="card-body" id="op-resultado">
       <div class="result-empty"><div class="big">🚚</div>Preencha os dados acima para calcular os custos operacionais.</div>
     </div>
@@ -3057,6 +3290,46 @@
 
     if (typeof orcSyncCamposRapidos === 'function') orcSyncCamposRapidos();
     atualizarPreviewsValor();
+    opAtualizarResumosAccordion();
+  }
+
+  // ── Custos Operacionais — acordeão (blocos colapsáveis) ──────────────────
+  // Cada bloco mostra um resumo do que já foi preenchido no cabeçalho, mesmo
+  // fechado, para reduzir a quantidade de campos visíveis de uma vez sem
+  // esconder a informação de que o usuário precisa.
+  function opToggleAccordion(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
+  function opAtualizarResumosAccordion() {
+    const set = (id, texto) => { const el = document.getElementById(id); if (el) el.textContent = texto; };
+
+    const dist = opGetNum('op-distancia');
+    set('op-acc-resumo-localizacao', dist > 0 ? dist + ' km' : 'preencher distância');
+
+    const valorPedido = opGetNum('op-valor-pedido');
+    const caminhao    = opGetInput('op-tipo-caminhao') || 'TRUCK';
+    set('op-acc-resumo-comerciais', valorPedido > 0 ? fmtBRL(valorPedido) + ' · ' + caminhao : 'preencher valor do pedido');
+
+    const aereo = opGetSimNao('op-passagem-aerea');
+    const dias  = opGetNum('op-dias-instalacao');
+    set('op-acc-resumo-deslocamento', aereo ? '✈️ passagem aérea' + (dias > 0 ? ' · ' + dias + ' dia(s)' : '') : 'rodoviário');
+
+    const tiposElevacao = [1,2,3]
+      .map(n => opGetInput('op-elevacao-tipo-' + n))
+      .filter(t => t && t !== 'NENHUM');
+    set('op-acc-resumo-elevacao', tiposElevacao.length ? tiposElevacao.join(', ') : 'nenhuma');
+
+    const m2 = opGetNum('op-m2-acm');
+    set('op-acc-resumo-acm', m2 > 0 ? m2.toFixed(2).replace('.', ',') + ' m²' : 'nenhum');
+
+    const extras = [];
+    if (opGetSimNao('op-plano-rigging'))  extras.push('Rigging');
+    if (opGetSimNao('op-art'))            extras.push('ART');
+    if (opGetSimNao('op-remocao-placa'))  extras.push('Remoção');
+    if (opGetSimNao('op-seguro-obra'))    extras.push('Seguro');
+    set('op-acc-resumo-extras', extras.length ? extras.join(', ') : 'nenhum');
   }
 
   // Campos numéricos "crus" (sem separador de milhar) são fáceis de digitar errado
@@ -3355,6 +3628,20 @@
 
     const alvoOrc = document.getElementById('orc-op-resultado');
     if (alvoOrc) alvoOrc.innerHTML = opGerarResultadoHTML('orc-op', 'Marque "Instalação por nossa conta" e/ou "Frete por nossa conta" acima para ver o detalhamento aqui.');
+
+    // Total ao vivo no topo (toolbar sticky) — some enquanto não há resultado ainda.
+    const r = opState.ultimoResultado;
+    const wrapTotal = document.getElementById('op-toolbar-total');
+    const valTotal = document.getElementById('op-toolbar-total-valor');
+    if (wrapTotal && valTotal) {
+      if (r && r.itens.length) {
+        valTotal.textContent = fmtBRL(r.total);
+        wrapTotal.style.display = '';
+      } else {
+        wrapTotal.style.display = 'none';
+      }
+    }
+    if (typeof opAtualizarResumosAccordion === 'function') opAtualizarResumosAccordion();
   }
 
   function opToggleDetalhe(fullId) {
