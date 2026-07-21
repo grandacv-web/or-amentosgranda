@@ -2536,6 +2536,7 @@
       if (!resp) return;
     }
     opLimparCampos();
+    _limparDadosProjeto();
   }
 // ══════════════════════════════════════════════════════════════════════
 // PRODUTOS CONFIGURADOS — Motor de Cálculo Paramétrico (menu Configurações)
@@ -4464,7 +4465,10 @@
   function novoOrcamento() {
     _editandoFbKey = null;
     _ocultarBannerEdicao();
-    if (itensOrcamento.length === 0) return; // nada para limpar
+    if (itensOrcamento.length === 0) {
+      _limparOrcamento(); // sem itens: apenas limpa os campos preenchidos
+      return;
+    }
 
     if (!_orcSalvo) {
       const resp = confirm(
@@ -4485,6 +4489,16 @@
     _limparOrcamento();
   }
 
+  // ── Limpa os campos compartilhados de "Dados do Projeto" ──────────────────
+  function _limparDadosProjeto() {
+    ['proj-empresa','proj-solicitante','proj-cidade','proj-job','proj-pedido'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const est = document.getElementById('proj-estado');
+    if (est) est.value = '';
+  }
+
   function _limparOrcamento() {
     itensOrcamento = [];
     _orcSalvo = true;
@@ -4501,12 +4515,7 @@
     atualizarBadgeAdesivos();
 
     // Limpa campos do projeto
-    ['proj-empresa','proj-solicitante','proj-cidade','proj-job','proj-pedido'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    const est = document.getElementById('proj-estado');
-    if (est) est.value = '';
+    _limparDadosProjeto();
 
     // Limpa campos de Custos Operacionais
     if (typeof opLimparCampos === 'function') opLimparCampos();
