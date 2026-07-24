@@ -1121,6 +1121,74 @@
     letter-spacing: .3px;
   }
 
+  /* -- Tabelas Padrão -- */
+  #view-tabelas-padrao { max-width: 1180px; margin: 20px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 18px; }
+  .tp-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--muted); flex-wrap: wrap; }
+  .tp-breadcrumb .tp-crumb { color: var(--brand); cursor: pointer; }
+  .tp-breadcrumb .tp-crumb:hover { text-decoration: underline; }
+  .tp-breadcrumb .tp-crumb.current { color: var(--text); cursor: default; text-decoration: none; }
+  .tp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  @media (max-width:520px) { .tp-grid { grid-template-columns: repeat(2,1fr); } }
+  .tp-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 26px 14px 22px; border-radius: var(--radius); border: 1.5px solid var(--border-soft);
+    background: #fff; box-shadow: var(--shadow-sm); cursor: pointer; transition: all .18s;
+    text-align: center; position: relative; gap: 8px; font-family: inherit;
+  }
+  .tp-card:not([disabled]):hover { border-color: var(--brand-light); background: var(--brand-tint); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .tp-card[disabled] { opacity: .5; cursor: not-allowed; }
+  .tp-card .tp-card-icon {
+    font-size: 28px; line-height: 1; width: 56px; height: 56px; display: flex; align-items: center;
+    justify-content: center; border-radius: 50%; background: var(--brand-tint);
+  }
+  .tp-card .tp-card-name { font-size: 12.5px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; color: var(--text); }
+  .tp-card .tp-card-desc { font-size: 10.5px; color: var(--muted); line-height: 1.3; }
+  .tp-card .badge-breve {
+    position: absolute; top: 8px; right: 8px; background: #fff3cd; color: #856404; font-size: 9px;
+    font-weight: 700; padding: 2px 6px; border-radius: 20px; text-transform: uppercase; letter-spacing: .3px;
+  }
+  .tp-regiao-card select, .tp-regiao-card input[type="text"] {
+    width: 100%; padding: 10px 12px; border: 1.5px solid transparent; border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--text); background-color: var(--input-bg); transition: border-color .15s, background .15s;
+  }
+  .tp-regiao-card select { padding: 10px 34px 10px 12px; }
+  .tp-regiao-card select:focus, .tp-regiao-card input:focus { outline: none; border-color: var(--brand-light); background-color: #fff; }
+  .tp-regiao-badge {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 14px;
+    border-radius: 20px; background: var(--grad-brand); color: #fff; font-size: 12.5px; font-weight: 700;
+    letter-spacing: .3px;
+  }
+  .tp-regiao-badge.tp-regiao-vazia { background: var(--input-bg); color: var(--muted); }
+  .tp-table-scroll { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
+  table.tp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  table.tp-table th {
+    background: var(--brand-tint); color: var(--brand); font-size: 10.5px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .3px; padding: 10px 10px; text-align: right; position: sticky; top: 0;
+  }
+  table.tp-table th:first-child, table.tp-table th:nth-child(2), table.tp-table th:nth-child(3) { text-align: left; }
+  table.tp-table td { padding: 9px 10px; border-top: 1px solid var(--border-soft); text-align: right; color: var(--text); }
+  table.tp-table td:first-child, table.tp-table td:nth-child(2), table.tp-table td:nth-child(3) { text-align: left; }
+  table.tp-table td.tp-td-total { font-weight: 800; color: var(--brand); }
+  table.tp-table tbody tr { transition: background .12s; cursor: pointer; }
+  table.tp-table tbody tr:hover { background: var(--brand-tint); }
+  table.tp-table tbody tr.tp-row-selected { background: var(--accent-tint); }
+  table.tp-table tbody tr.tp-row-selected td.tp-td-total { color: var(--accent); }
+  .tp-checkbox { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; }
+  .tp-resumo-card { border: 1.5px solid var(--brand-light); background: var(--brand-tint); border-radius: var(--radius); padding: 16px 18px; position: sticky; bottom: 12px; box-shadow: var(--shadow-md); }
+  .tp-resumo-vazio { color: var(--muted); font-size: 12.5px; text-align: center; padding: 6px 0; }
+  .tp-resumo-lista { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; max-height: 160px; overflow-y: auto; }
+  .tp-resumo-item { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; padding: 5px 8px; background: #fff; border-radius: 8px; }
+  .tp-resumo-item .nome { color: var(--text); font-weight: 600; }
+  .tp-resumo-item .valor { color: var(--brand); font-weight: 700; white-space: nowrap; }
+  .tp-resumo-somas { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; padding-top: 12px; border-top: 1.5px dashed rgba(27,43,110,.25); }
+  .tp-resumo-soma-item { background: #fff; border-radius: 10px; padding: 8px 10px; }
+  .tp-resumo-soma-item .label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: var(--muted); }
+  .tp-resumo-soma-item .valor { font-size: 13.5px; font-weight: 800; color: var(--text); margin-top: 2px; }
+  .tp-resumo-total { grid-column: 1/-1; background: var(--grad-brand); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .tp-resumo-total .label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: rgba(255,255,255,.8); }
+  .tp-resumo-total .valor { font-size: 19px; font-weight: 800; color: #fff; }
+  .tp-viewonly-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); background: var(--input-bg); padding: 5px 10px; border-radius: 20px; }
+
 
   /* -- Custos Operacionais -- */
   #view-operacional { max-width: 980px; margin: 20px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 20px; }
@@ -1386,6 +1454,9 @@
   </button>
   <button class="nav-tab" onclick="setView('lista-operacional')" id="nav-lista-operacional">
     🗂️ Operacionais Salvos
+  </button>
+  <button class="nav-tab" onclick="setView('tabelas-padrao')" id="nav-tabelas-padrao">
+    📑 Tabelas Padrão
   </button>
   <button class="nav-tab" onclick="abrirConfiguracoes()" id="nav-config">
     ⚙️ Configurações
@@ -2366,6 +2437,108 @@
     </div>
   </div>
 </div><!-- /view-config -->
+
+<!-- ── Vista: Tabelas Padrão ── -->
+<div id="view-tabelas-padrao" style="display:none;">
+
+  <div class="tp-breadcrumb" id="tp-breadcrumb"></div>
+
+  <!-- Nível 1: Clientes -->
+  <div id="tp-nivel-clientes">
+    <div class="card">
+      <div class="card-header"><span class="icon">📑</span> Tabelas Padrão</div>
+      <div class="card-body">
+        <div class="tp-grid">
+          <button class="tp-card" onclick="tpAbrirCliente('burgerking')">
+            <div class="tp-card-icon">🍔</div>
+            <div class="tp-card-name">Burger King</div>
+            <div class="tp-card-desc">Tabelas de preços padronizadas</div>
+          </button>
+          <button class="tp-card" disabled>
+            <span class="badge-breve">Em breve</span>
+            <div class="tp-card-icon">🏢</div>
+            <div class="tp-card-name">Novo Cliente</div>
+            <div class="tp-card-desc">Aguardando cadastro</div>
+          </button>
+          <button class="tp-card" disabled>
+            <span class="badge-breve">Em breve</span>
+            <div class="tp-card-icon">🏢</div>
+            <div class="tp-card-name">Novo Cliente</div>
+            <div class="tp-card-desc">Aguardando cadastro</div>
+          </button>
+          <button class="tp-card" disabled>
+            <span class="badge-breve">Em breve</span>
+            <div class="tp-card-icon">🏢</div>
+            <div class="tp-card-name">Novo Cliente</div>
+            <div class="tp-card-desc">Aguardando cadastro</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nível 2: Tabelas do cliente -->
+  <div id="tp-nivel-tabelas" style="display:none;">
+    <div class="card">
+      <div class="card-header"><span class="icon">🍔</span> Burger King</div>
+      <div class="card-body">
+        <div class="tp-grid">
+          <button class="tp-card" onclick="tpAbrirTabela('manutencao')">
+            <div class="tp-card-icon">🛠️</div>
+            <div class="tp-card-name">Tabela de Manutenção</div>
+            <div class="tp-card-desc">Letreiros, totens, bottoms e pórticos</div>
+          </button>
+          <button class="tp-card" disabled>
+            <span class="badge-breve">Em breve</span>
+            <div class="tp-card-icon">🆕</div>
+            <div class="tp-card-name">Outra Tabela</div>
+            <div class="tp-card-desc">Aguardando cadastro</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nível 3: Tabela de Manutenção -->
+  <div id="tp-nivel-manutencao" style="display:none;">
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">🛠️</span> Tabela de Manutenção — Burger King
+        <div style="margin-left:auto;"><span class="tp-viewonly-tag">👁️ Somente visualização</span></div>
+      </div>
+      <div class="card-body tp-regiao-card">
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;">
+          <div>
+            <label>Cidade de destino</label>
+            <input type="text" id="tp-cidade" placeholder="Ex: Curitiba" oninput="tpAtualizarRegiao()">
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="tp-uf" onchange="tpAtualizarRegiao()">
+              <option value="">UF</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+          <div>
+            <span class="tp-regiao-badge tp-regiao-vazia" id="tp-regiao-badge">Informe cidade e UF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tp-table-scroll" style="margin-top:16px;" id="tp-tabela-wrap"></div>
+
+    <div class="tp-resumo-card" style="margin-top:16px;" id="tp-resumo-wrap"></div>
+  </div>
+
+</div>
+<!-- /view-tabelas-padrao -->
 
 <!-- ── Modal: Resumo (Lista de RM / Operacionais Salvos) ── -->
 <div class="resumo-overlay hidden" id="resumo-overlay" onclick="if(event.target===this) fecharResumoModal()">
@@ -5744,11 +5917,13 @@
     const viewOp      = document.getElementById('view-operacional');
     const viewListaOp = document.getElementById('view-lista-operacional');
     const viewConfig  = document.getElementById('view-config');
+    const viewTP      = document.getElementById('view-tabelas-padrao');
     const navOrc      = document.getElementById('nav-orcamento');
     const navLista    = document.getElementById('nav-lista');
     const navOp       = document.getElementById('nav-operacional');
     const navListaOp  = document.getElementById('nav-lista-operacional');
     const navConfig   = document.getElementById('nav-config');
+    const navTP       = document.getElementById('nav-tabelas-padrao');
     const projHeader  = document.getElementById('proj-header-wrap');
     const orcToolbar  = document.getElementById('orc-toolbar-wrap');
     const catSel      = document.getElementById('cat-selector-wrap');
@@ -5759,8 +5934,9 @@
     if (viewOp)      viewOp.style.display      = (view === 'operacional')       ? 'flex'  : 'none';
     if (viewListaOp) viewListaOp.style.display = (view === 'lista-operacional') ? 'block' : 'none';
     if (viewConfig)  viewConfig.style.display  = (view === 'config')            ? 'block' : 'none';
+    if (viewTP)       viewTP.style.display      = (view === 'tabelas-padrao')    ? 'flex'  : 'none';
 
-    const viewsSemToolbar = (view === 'lista' || view === 'lista-operacional' || view === 'config');
+    const viewsSemToolbar = (view === 'lista' || view === 'lista-operacional' || view === 'config' || view === 'tabelas-padrao');
     if (projHeader) projHeader.style.display = viewsSemToolbar ? 'none' : '';
     if (orcToolbar) orcToolbar.style.display = viewsSemToolbar ? 'none' : '';
     if (catSel)     catSel.style.display     = (view === 'orcamento') ? '' : 'none';
@@ -5770,11 +5946,13 @@
     if (navOp)      navOp.classList.toggle('active', view === 'operacional');
     if (navListaOp) navListaOp.classList.toggle('active', view === 'lista-operacional');
     if (navConfig)  navConfig.classList.toggle('active', view === 'config');
+    if (navTP)      navTP.classList.toggle('active', view === 'tabelas-padrao');
 
     if (view === 'lista') renderListaRM();
     if (view === 'lista-operacional') renderListaOperacionais();
     if (view === 'operacional') { opAtualizarVisibilidade(); opRenderResultado(); }
     if (view === 'config') { renderMateriasConfig(); renderProdutosConfig(); cfgAtualizarSelectProdutos(); }
+    if (view === 'tabelas-padrao') tpRenderBreadcrumb();
   }
 
   function setCategoria(cat) {
@@ -6404,6 +6582,462 @@
     cfgAtualizarMateriasDatalist();
     ajustarNavbarHeight();
   });
+
+  // ══════════════════════════════════════════════════════════════════════
+  // TABELAS PADRÃO — Burger King › Tabela de Manutenção
+  // Dados fixos por região (fonte: "TABELA BK MANUTENÇÃO E BK É FOGO - COM
+  // DESPESAS DIVIDIDAS.xlsx"). Somente visualização — o usuário seleciona
+  // produtos e o sistema soma os valores unitários (produto, frete, munck,
+  // instalação, mobilização, ART, laudo técnico, remoção/descarte, total).
+  // A região é identificada automaticamente a partir do UF informado,
+  // reaproveitando o mapa OP_REGIAO_POR_UF já usado em Custos Operacionais.
+  // ══════════════════════════════════════════════════════════════════════
+  const TP_BK_MANUTENCAO = {
+    'SUL': [
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:15820},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:560,a:70,vp:8624,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:12124},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:480,a:60,vp:7392,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10892},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:440,a:55,vp:6776,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10276},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:400,a:50,vp:6160,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:9660},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:320,a:40,vp:4928,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:8428},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:800,a:100,vp:1200,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4700},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:560,a:70,vp:1500,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5000},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:480,a:60,vp:2089.9,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5589.9},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:440,a:55,vp:2635,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:6135},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:400,a:50,vp:4488.86,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:7988.86},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:320,a:40,vp:4676.79,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:8176.79},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:750,a:35,vp:5486,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:7486},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:643,a:30,vp:4702,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:6702},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:536,a:25,vp:4156,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:6156},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:241,a:35,vp:2617,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:4617},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:206,a:30,vp:2243,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:4243},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:172,a:25,vp:1869,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:3869},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:164,a:180,vp:6800,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10300},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:140,a:154,vp:5600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:9100},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:109,a:120,vp:4400,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:7900},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:54,a:60,vp:2156,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5656},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:45,a:50,vp:600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4100},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:54,a:60,vp:800,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4300},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:63,a:70,vp:1000,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4500},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:72,a:80,vp:1200,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4700},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:82,a:90,vp:1500,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5000},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:91,a:100,vp:1600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5100},
+      {p:"PÓRTICO LIMITADOR DE ALTURA",t:"MODELO EM L COM UM PÉ",l:358,a:302,vp:13639,fr:3000,mu:1000,ins:1500,mob:800,art:0,lt:0,rd:0,tot:19939},
+      {p:"TOTEM 5M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:136,a:500,vp:25285,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:46285},
+      {p:"TOTEM 6M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:164,a:600,vp:29342,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:50342},
+      {p:"TOTEM 7M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:191,a:700,vp:44000,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:65000},
+      {p:"TOTEM 8M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:218,a:800,vp:51868,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:72868},
+      {p:"TOTEM 10M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:223,a:1000,vp:64297,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:92797},
+      {p:"TOTEM 12M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:273,a:1200,vp:67725,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:96225},
+      {p:"TOTEM 15M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:334,a:1500,vp:94648,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:123148},
+      {p:"TOTEM 20M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:446,a:2000,vp:164357,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:192857},
+      {p:"RETROFIT TOTEM 5M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:136,a:150,vp:22785,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:40785},
+      {p:"RETROFIT TOTEM 6M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:164,a:180,vp:26142,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:44142},
+      {p:"RETROFIT TOTEM 7M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:191,a:210,vp:38500,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:56500},
+      {p:"RETROFIT TOTEM 8M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:218,a:240,vp:45439,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:63439},
+      {p:"RETROFIT TOTEM 10M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:223,a:245,vp:51297,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:73297},
+      {p:"RETROFIT TOTEM 12M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:273,a:300,vp:53297,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:75297},
+      {p:"RETROFIT TOTEM 15M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:334,a:367,vp:66848,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:88848},
+      {p:"RETROFIT TOTEM 20M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:446,a:490,vp:97357,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:119357},
+      {p:"PINTURA TUBO 5M",t:"PINTURA",l:0,a:0,vp:3000,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:7500},
+      {p:"PINTURA TUBO 6M",t:"PINTURA",l:0,a:0,vp:3500,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:8000},
+      {p:"PINTURA TUBO 7M",t:"PINTURA",l:0,a:0,vp:4000,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:8500},
+      {p:"PINTURA TUBO 8M",t:"PINTURA",l:0,a:0,vp:4500,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:9000},
+      {p:"PINTURA TUBO 10M",t:"PINTURA",l:0,a:0,vp:5000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:15500},
+      {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16000},
+      {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16500},
+      {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:17000},
+    ],
+    'SUDESTE': [
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:15820},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:560,a:70,vp:8624,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:12124},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:480,a:60,vp:7392,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10892},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:440,a:55,vp:6776,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10276},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:400,a:50,vp:6160,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:9660},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:320,a:40,vp:4928,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:8428},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:800,a:100,vp:1200,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4700},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:560,a:70,vp:1500,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5000},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:480,a:60,vp:2089.9,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5589.9},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:440,a:55,vp:2635,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:6135},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:400,a:50,vp:4488.86,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:7988.86},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:320,a:40,vp:4676.79,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:8176.79},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:750,a:35,vp:5486,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:7486},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:643,a:30,vp:4702,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:6702},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:536,a:25,vp:4156,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:6156},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:241,a:35,vp:2617,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:4617},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:206,a:30,vp:2243,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:4243},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:172,a:25,vp:1869,fr:1000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:3869},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:164,a:180,vp:6800,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:10300},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:140,a:154,vp:5600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:9100},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:109,a:120,vp:4400,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:7900},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:54,a:60,vp:2156,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5656},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:45,a:50,vp:600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4100},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:54,a:60,vp:800,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4300},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:63,a:70,vp:1000,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4500},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:72,a:80,vp:1200,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:4700},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:82,a:90,vp:1500,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5000},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:91,a:100,vp:1600,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:5100},
+      {p:"PÓRTICO LIMITADOR DE ALTURA",t:"MODELO EM L COM UM PÉ",l:358,a:302,vp:13639,fr:3000,mu:1000,ins:1500,mob:800,art:0,lt:0,rd:0,tot:19939},
+      {p:"TOTEM 5M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:136,a:500,vp:25285,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:46285},
+      {p:"TOTEM 6M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:164,a:600,vp:29342,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:50342},
+      {p:"TOTEM 7M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:191,a:700,vp:44000,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:65000},
+      {p:"TOTEM 8M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:218,a:800,vp:51868,fr:10000,mu:4500,ins:4000,mob:2000,art:500,lt:0,rd:0,tot:72868},
+      {p:"TOTEM 10M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:223,a:1000,vp:64297,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:92797},
+      {p:"TOTEM 12M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:273,a:1200,vp:67725,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:96225},
+      {p:"TOTEM 15M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:334,a:1500,vp:94648,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:123148},
+      {p:"TOTEM 20M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:446,a:2000,vp:164357,fr:12000,mu:9000,ins:5000,mob:2000,art:500,lt:0,rd:0,tot:192857},
+      {p:"RETROFIT TOTEM 5M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:136,a:500,vp:22785,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:40785},
+      {p:"RETROFIT TOTEM 6M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:164,a:600,vp:26142,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:44142},
+      {p:"RETROFIT TOTEM 7M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:191,a:700,vp:38500,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:56500},
+      {p:"RETROFIT TOTEM 8M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:218,a:800,vp:45439,fr:6000,mu:4500,ins:3500,mob:1000,art:500,lt:2000,rd:500,tot:63439},
+      {p:"RETROFIT TOTEM 10M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:223,a:1000,vp:51297,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:73297},
+      {p:"RETROFIT TOTEM 12M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:273,a:1200,vp:53297,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:75297},
+      {p:"RETROFIT TOTEM 15M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:334,a:1500,vp:66848,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:88848},
+      {p:"RETROFIT TOTEM 20M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:446,a:2000,vp:97357,fr:7500,mu:6000,ins:4000,mob:1500,art:500,lt:2000,rd:500,tot:119357},
+      {p:"PINTURA TUBO 5M",t:"PINTURA",l:0,a:0,vp:3000,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:7500},
+      {p:"PINTURA TUBO 6M",t:"PINTURA",l:0,a:0,vp:3500,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:8000},
+      {p:"PINTURA TUBO 7M",t:"PINTURA",l:0,a:0,vp:4000,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:8500},
+      {p:"PINTURA TUBO 8M",t:"PINTURA",l:0,a:0,vp:4500,fr:0,mu:0,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:9000},
+      {p:"PINTURA TUBO 10M",t:"PINTURA",l:0,a:0,vp:5000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:15500},
+      {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16000},
+      {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16500},
+      {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:17000},
+    ],
+    'NORDESTE': [
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:19320},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:560,a:70,vp:8624,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:15624},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:480,a:60,vp:7392,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:14392},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:440,a:55,vp:6776,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13776},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:400,a:50,vp:6160,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13160},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:320,a:40,vp:4928,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11928},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:800,a:100,vp:1200,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8200},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:560,a:70,vp:1500,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8500},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:480,a:60,vp:2089.9,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9089.9},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:440,a:55,vp:2635,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9635},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:400,a:50,vp:4488.86,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11488.86},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:320,a:40,vp:4676.79,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11676.79},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:750,a:35,vp:5486,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:9486},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:643,a:30,vp:4702,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:8702},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:536,a:25,vp:4156,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:8156},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:241,a:35,vp:2617,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:6617},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:206,a:30,vp:2243,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:6243},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:172,a:25,vp:1869,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:5869},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:164,a:180,vp:6800,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13800},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:140,a:154,vp:5600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:12600},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:109,a:120,vp:4400,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11400},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:54,a:60,vp:2156,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9156},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:45,a:50,vp:600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:7600},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:54,a:60,vp:800,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:7800},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:63,a:70,vp:1000,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8000},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:72,a:80,vp:1200,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8200},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:82,a:90,vp:1500,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8500},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:91,a:100,vp:1600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8600},
+      {p:"PÓRTICO LIMITADOR DE ALTURA",t:"MODELO EM L COM UM PÉ",l:358,a:302,vp:13639,fr:6000,mu:2000,ins:3000,mob:1600,art:0,lt:0,rd:0,tot:26239},
+      {p:"TOTEM 5M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:136,a:500,vp:25285,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:67285},
+      {p:"TOTEM 6M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:164,a:600,vp:29342,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:71342},
+      {p:"TOTEM 7M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:191,a:700,vp:44000,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:86000},
+      {p:"TOTEM 8M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:218,a:800,vp:51868,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:93868},
+      {p:"TOTEM 10M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:223,a:1000,vp:64297,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:121297},
+      {p:"TOTEM 12M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:273,a:1200,vp:67725,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:124725},
+      {p:"TOTEM 15M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:334,a:1500,vp:94648,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:151648},
+      {p:"TOTEM 20M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:446,a:2000,vp:164357,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:221357},
+      {p:"RETROFIT TOTEM 5M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:136,a:500,vp:22785,fr:10157,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:48942},
+      {p:"RETROFIT TOTEM 6M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:164,a:600,vp:26142,fr:10828.4,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:52970.4},
+      {p:"RETROFIT TOTEM 7M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:191,a:700,vp:38500,fr:13300,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:67800},
+      {p:"RETROFIT TOTEM 8M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:218,a:800,vp:45439,fr:14687.8,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:76126.8},
+      {p:"RETROFIT TOTEM 10M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:223,a:1000,vp:51297,fr:19159.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:87956.4},
+      {p:"RETROFIT TOTEM 12M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:273,a:1200,vp:53297,fr:19559.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:90356.4},
+      {p:"RETROFIT TOTEM 15M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:334,a:1500,vp:66848,fr:22269.6,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:106617.6},
+      {p:"RETROFIT TOTEM 20M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:446,a:2000,vp:97357,fr:28371.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:143228.4},
+      {p:"PINTURA TUBO 5M",t:"PINTURA",l:0,a:0,vp:3000,fr:0,mu:0,ins:3000,mob:4500,art:0,lt:0,rd:0,tot:7500},
+      {p:"PINTURA TUBO 6M",t:"PINTURA",l:0,a:0,vp:3500,fr:0,mu:0,ins:3000,mob:4500,art:0,lt:0,rd:0,tot:8000},
+      {p:"PINTURA TUBO 7M",t:"PINTURA",l:0,a:0,vp:4000,fr:0,mu:0,ins:3000,mob:4500,art:0,lt:0,rd:0,tot:8500},
+      {p:"PINTURA TUBO 8M",t:"PINTURA",l:0,a:0,vp:4500,fr:0,mu:0,ins:3000,mob:4500,art:0,lt:0,rd:0,tot:9000},
+      {p:"PINTURA TUBO 10M",t:"PINTURA",l:0,a:0,vp:5000,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:15500},
+      {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:16000},
+      {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:16500},
+      {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:17000},
+    ],
+    'NORTE': [
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:19320},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:560,a:70,vp:8624,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:15624},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:480,a:60,vp:7392,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:14392},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:440,a:55,vp:6776,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13776},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:400,a:50,vp:6160,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13160},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:320,a:40,vp:4928,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11928},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:800,a:100,vp:1200,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8200},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:560,a:70,vp:1500,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8500},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:480,a:60,vp:2089.9,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9089.9},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:440,a:55,vp:2635,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9635},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:400,a:50,vp:4488.86,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11488.86},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:320,a:40,vp:4676.79,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11676.79},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:750,a:35,vp:5486,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:9486},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:643,a:30,vp:4702,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:8702},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:536,a:25,vp:4156,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:8156},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:241,a:35,vp:2617,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:6617},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:206,a:30,vp:2243,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:6243},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:172,a:25,vp:1869,fr:2000,mu:0,ins:600,mob:1000,art:0,lt:0,rd:400,tot:5869},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:164,a:180,vp:6800,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:13800},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:140,a:154,vp:5600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:12600},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:109,a:120,vp:4400,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:11400},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:54,a:60,vp:2156,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:9156},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:45,a:50,vp:600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:7600},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:54,a:60,vp:800,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:7800},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:63,a:70,vp:1000,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8000},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:72,a:80,vp:1200,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8200},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:82,a:90,vp:1500,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8500},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:91,a:100,vp:1600,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:8600},
+      {p:"PÓRTICO LIMITADOR DE ALTURA",t:"MODELO EM L COM UM PÉ",l:358,a:302,vp:13639,fr:6000,mu:2000,ins:3000,mob:1600,art:0,lt:0,rd:0,tot:26239},
+      {p:"TOTEM 5M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:136,a:500,vp:25285,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:67285},
+      {p:"TOTEM 6M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:164,a:600,vp:29342,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:71342},
+      {p:"TOTEM 7M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:191,a:700,vp:44000,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:86000},
+      {p:"TOTEM 8M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:218,a:800,vp:51868,fr:20000,mu:9000,ins:8000,mob:4000,art:1000,lt:0,rd:0,tot:93868},
+      {p:"TOTEM 10M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:223,a:1000,vp:64297,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:121297},
+      {p:"TOTEM 12M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:273,a:1200,vp:67725,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:124725},
+      {p:"TOTEM 15M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:334,a:1500,vp:94648,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:151648},
+      {p:"TOTEM 20M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:446,a:2000,vp:164357,fr:24000,mu:18000,ins:10000,mob:4000,art:1000,lt:0,rd:0,tot:221357},
+      {p:"RETROFIT TOTEM 5M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:136,a:500,vp:22785,fr:10157,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:48942},
+      {p:"RETROFIT TOTEM 6M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:164,a:600,vp:26142,fr:10828.4,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:52970.4},
+      {p:"RETROFIT TOTEM 7M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:191,a:700,vp:38500,fr:13300,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:67800},
+      {p:"RETROFIT TOTEM 8M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:218,a:800,vp:45439,fr:14687.8,mu:4500,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:76126.8},
+      {p:"RETROFIT TOTEM 10M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:223,a:1000,vp:51297,fr:19159.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:87956.4},
+      {p:"RETROFIT TOTEM 12M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:273,a:1200,vp:53297,fr:19559.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:90356.4},
+      {p:"RETROFIT TOTEM 15M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:334,a:1500,vp:66848,fr:22269.6,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:106617.6},
+      {p:"RETROFIT TOTEM 20M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:446,a:2000,vp:97357,fr:28371.4,mu:6000,ins:4500,mob:4000,art:500,lt:2000,rd:500,tot:143228.4},
+      {p:"PINTURA TUBO 5M",t:"PINTURA",l:0,a:0,vp:3000,fr:0,mu:0,ins:3000,mob:7000,art:0,lt:0,rd:0,tot:7500},
+      {p:"PINTURA TUBO 6M",t:"PINTURA",l:0,a:0,vp:3500,fr:0,mu:0,ins:3000,mob:7000,art:0,lt:0,rd:0,tot:8000},
+      {p:"PINTURA TUBO 7M",t:"PINTURA",l:0,a:0,vp:4000,fr:0,mu:0,ins:3000,mob:7000,art:0,lt:0,rd:0,tot:8500},
+      {p:"PINTURA TUBO 8M",t:"PINTURA",l:0,a:0,vp:4500,fr:0,mu:0,ins:3000,mob:7000,art:0,lt:0,rd:0,tot:9000},
+      {p:"PINTURA TUBO 10M",t:"PINTURA",l:0,a:0,vp:5000,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:15500},
+      {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:16000},
+      {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:16500},
+      {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:17000},
+    ],
+    'CENTRO-OESTE': [
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:17570},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:560,a:70,vp:8624,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:13874},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:480,a:60,vp:7392,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:12642},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:440,a:55,vp:6776,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:12026},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:400,a:50,vp:6160,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:11410},
+      {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:320,a:40,vp:4928,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:10178},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:800,a:100,vp:1200,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:6450},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:560,a:70,vp:1500,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:6750},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:480,a:60,vp:2089.9,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:7339.9},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:440,a:55,vp:2635,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:7885},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:400,a:50,vp:4488.86,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:9738.86},
+      {p:"LETREIRO BURGER KING",t:"PVC 20MM COM PINTURA",l:320,a:40,vp:4676.79,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:9926.79},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:750,a:35,vp:5486,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:8486},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:643,a:30,vp:4702,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:7702},
+      {p:"LETREIRO GRELHANDO NO FOGO",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:536,a:25,vp:4156,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:7156},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:241,a:35,vp:2617,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:5617},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:206,a:30,vp:2243,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:5243},
+      {p:"LETREIRO DELIVERY",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:172,a:25,vp:1869,fr:2000,mu:0,ins:300,mob:500,art:0,lt:0,rd:200,tot:4869},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:164,a:180,vp:6800,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:12050},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:140,a:154,vp:5600,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:10850},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:109,a:120,vp:4400,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:9650},
+      {p:"BOTTOM BURGER KING",t:"ACM VAZADO COM ACRÍLICO E ILUM. INTERNA",l:54,a:60,vp:2156,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:7406},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:45,a:50,vp:600,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:5850},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:54,a:60,vp:800,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:6050},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:63,a:70,vp:1000,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:6250},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:72,a:80,vp:1200,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:6450},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:82,a:90,vp:1500,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:6750},
+      {p:"BOTTOM BURGER KING",t:"ACRÍLICO 3MM SOBREPOSTO DE ACRILICO 3MM",l:91,a:100,vp:1600,fr:2500,mu:800,ins:1050,mob:700,art:0,lt:0,rd:200,tot:6850},
+      {p:"PÓRTICO LIMITADOR DE ALTURA",t:"MODELO EM L COM UM PÉ",l:358,a:302,vp:13639,fr:4000,mu:1500,ins:2450,mob:1500,art:0,lt:0,rd:0,tot:23089},
+      {p:"TOTEM 5M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:136,a:500,vp:25285,fr:15000,mu:6000,ins:5000,mob:5500,art:500,lt:0,rd:0,tot:57285},
+      {p:"TOTEM 6M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:164,a:600,vp:29342,fr:15000,mu:6000,ins:5000,mob:5500,art:500,lt:0,rd:0,tot:61342},
+      {p:"TOTEM 7M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:191,a:700,vp:44000,fr:15000,mu:6000,ins:5000,mob:5500,art:500,lt:0,rd:0,tot:76000},
+      {p:"TOTEM 8M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:218,a:800,vp:51868,fr:15000,mu:6000,ins:5000,mob:5500,art:500,lt:0,rd:0,tot:83868},
+      {p:"TOTEM 10M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:223,a:1000,vp:67047,fr:18000,mu:10000,ins:6000,mob:5500,art:500,lt:0,rd:0,tot:107047},
+      {p:"TOTEM 12M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:273,a:1200,vp:70475,fr:18000,mu:10000,ins:6000,mob:5500,art:500,lt:0,rd:0,tot:110475},
+      {p:"TOTEM 15M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:334,a:1500,vp:97398,fr:18000,mu:10000,ins:6000,mob:5500,art:500,lt:0,rd:0,tot:137398},
+      {p:"TOTEM 20M COMPLETO",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS E TUBO METÁLICO NOVO",l:446,a:2000,vp:167107,fr:18000,mu:10000,ins:6000,mob:5500,art:500,lt:0,rd:0,tot:207107},
+      {p:"RETROFIT TOTEM 5M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:136,a:500,vp:22785,fr:9117.75,mu:4500,ins:4500,mob:3000,art:500,lt:2000,rd:500,tot:46902.75},
+      {p:"RETROFIT TOTEM 6M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:164,a:600,vp:26142,fr:9621.3,mu:4500,ins:4500,mob:3000,art:500,lt:2000,rd:500,tot:50763.3},
+      {p:"RETROFIT TOTEM 7M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:191,a:700,vp:38500,fr:11475,mu:4500,ins:4500,mob:3000,art:500,lt:2000,rd:500,tot:64975},
+      {p:"RETROFIT TOTEM 8M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:218,a:800,vp:45439,fr:12515.85,mu:4500,ins:4500,mob:3000,art:500,lt:2000,rd:500,tot:72954.85},
+      {p:"RETROFIT TOTEM 10M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:223,a:1000,vp:51297,fr:14994.55,mu:6000,ins:6000,mob:3000,art:500,lt:2000,rd:500,tot:84291.55},
+      {p:"RETROFIT TOTEM 12M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:273,a:1200,vp:53297,fr:15000,mu:6294.55,ins:6000,mob:3000,art:500,lt:2000,rd:500,tot:86591.55},
+      {p:"RETROFIT TOTEM 15M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:334,a:1500,vp:66848,fr:16000,mu:7327.2,ins:6000,mob:3000,art:500,lt:2000,rd:500,tot:102175.2},
+      {p:"RETROFIT TOTEM 20M",t:"CHAPÉU ACM VAZADO, 2 GRAVATAS, 2 PORTA LONAS E PINTURA DO TUBO EXISTENTE",l:446,a:2000,vp:98260.55,fr:18000,mu:9000,ins:6000,mob:3000,art:500,lt:2000,rd:500,tot:137260.55},
+      {p:"PINTURA TUBO 5M",t:"PINTURA",l:0,a:0,vp:3000,fr:0,mu:0,ins:3000,mob:4000,art:0,lt:0,rd:0,tot:7500},
+      {p:"PINTURA TUBO 6M",t:"PINTURA",l:0,a:0,vp:3500,fr:0,mu:0,ins:3000,mob:4000,art:0,lt:0,rd:0,tot:8000},
+      {p:"PINTURA TUBO 7M",t:"PINTURA",l:0,a:0,vp:4000,fr:0,mu:0,ins:3000,mob:4000,art:0,lt:0,rd:0,tot:8500},
+      {p:"PINTURA TUBO 8M",t:"PINTURA",l:0,a:0,vp:4500,fr:0,mu:0,ins:3000,mob:4000,art:0,lt:0,rd:0,tot:9000},
+      {p:"PINTURA TUBO 10M",t:"PINTURA",l:0,a:0,vp:5000,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:15500},
+      {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:16000},
+      {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:16500},
+      {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:17000},
+    ],
+  };
+
+  let tpState = {
+    nivel: 'clientes',   // 'clientes' | 'tabelas' | 'manutencao'
+    cliente: null,
+    tabela: null,
+    regiao: null,
+    selecionados: new Set(),
+  };
+
+  function tpRenderBreadcrumb() {
+    const el = document.getElementById('tp-breadcrumb');
+    if (!el) return;
+    const parts = [];
+    parts.push(tpState.nivel === 'clientes'
+      ? '<span class="tp-crumb current">📑 Tabelas Padrão</span>'
+      : '<span class="tp-crumb" onclick="tpVoltarClientes()">📑 Tabelas Padrão</span>');
+    if (tpState.cliente) {
+      const nomeCliente = tpState.cliente === 'burgerking' ? 'Burger King' : tpState.cliente;
+      parts.push('<span>›</span>');
+      parts.push(tpState.nivel === 'tabelas'
+        ? '<span class="tp-crumb current">' + nomeCliente + '</span>'
+        : '<span class="tp-crumb" onclick="tpVoltarTabelas()">' + nomeCliente + '</span>');
+    }
+    if (tpState.tabela) {
+      const nomeTabela = tpState.tabela === 'manutencao' ? 'Tabela de Manutenção' : tpState.tabela;
+      parts.push('<span>›</span>');
+      parts.push('<span class="tp-crumb current">' + nomeTabela + '</span>');
+    }
+    el.innerHTML = parts.join(' ');
+
+    const nivelClientes    = document.getElementById('tp-nivel-clientes');
+    const nivelTabelas     = document.getElementById('tp-nivel-tabelas');
+    const nivelManutencao  = document.getElementById('tp-nivel-manutencao');
+    if (nivelClientes)   nivelClientes.style.display   = tpState.nivel === 'clientes'   ? '' : 'none';
+    if (nivelTabelas)    nivelTabelas.style.display    = tpState.nivel === 'tabelas'    ? '' : 'none';
+    if (nivelManutencao) nivelManutencao.style.display = tpState.nivel === 'manutencao' ? '' : 'none';
+  }
+
+  function tpVoltarClientes() {
+    tpState.nivel = 'clientes'; tpState.cliente = null; tpState.tabela = null;
+    tpRenderBreadcrumb();
+  }
+
+  function tpVoltarTabelas() {
+    tpState.nivel = 'tabelas'; tpState.tabela = null;
+    tpRenderBreadcrumb();
+  }
+
+  function tpAbrirCliente(cliente) {
+    tpState.nivel = 'tabelas';
+    tpState.cliente = cliente;
+    tpRenderBreadcrumb();
+  }
+
+  function tpAbrirTabela(tabela) {
+    tpState.nivel = 'manutencao';
+    tpState.tabela = tabela;
+    tpState.selecionados = new Set();
+    tpRenderBreadcrumb();
+    tpAtualizarRegiao();
+  }
+
+  function tpChaveRegiao(regiaoUF) {
+    if (!regiaoUF) return null;
+    return regiaoUF === 'CENTRO OESTE' ? 'CENTRO-OESTE' : regiaoUF;
+  }
+
+  function tpAtualizarRegiao() {
+    const uf = (document.getElementById('tp-uf')?.value || '').toUpperCase();
+    const badge = document.getElementById('tp-regiao-badge');
+    const regiaoUF = uf ? opRegiaoPorUF(uf) : null;
+    const chave = tpChaveRegiao(regiaoUF);
+    tpState.regiao = chave;
+    if (badge) {
+      if (chave) {
+        badge.textContent = '📍 Região identificada: ' + chave.replace('-', ' ');
+        badge.classList.remove('tp-regiao-vazia');
+      } else {
+        badge.textContent = 'Informe cidade e UF';
+        badge.classList.add('tp-regiao-vazia');
+      }
+    }
+    tpRenderTabela();
+  }
+
+  function tpRenderTabela() {
+    const wrap = document.getElementById('tp-tabela-wrap');
+    if (!wrap) return;
+    if (!tpState.regiao) {
+      wrap.innerHTML = '<div class="tp-resumo-vazio" style="padding:36px 0;">Selecione a cidade e o estado de destino para exibir a tabela de preços da região correspondente.</div>';
+      tpAtualizarResumo();
+      return;
+    }
+    const itens = TP_BK_MANUTENCAO[tpState.regiao] || [];
+    let html = '<table class="tp-table"><thead><tr>'
+      + '<th></th><th>Produto</th><th>Tipo</th><th>Larg. (cm)</th><th>Alt. (cm)</th>'
+      + '<th>Valor Produto</th><th>Frete</th><th>Munck</th><th>Instalação</th><th>Mobilização</th>'
+      + '<th>ART</th><th>Laudo Técnico</th><th>Remoção/Descarte</th><th>Total</th>'
+      + '</tr></thead><tbody>';
+    itens.forEach(function(it, idx) {
+      const sel = tpState.selecionados.has(idx);
+      html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')">'
+        + '<td onclick="event.stopPropagation()"><input type="checkbox" class="tp-checkbox" ' + (sel ? 'checked' : '') + ' onchange="tpToggleItem(' + idx + ')"></td>'
+        + '<td>' + escHtml(it.p) + '</td><td>' + escHtml(it.t) + '</td>'
+        + '<td>' + (it.l ? fmtQtd(it.l, 0) : '—') + '</td><td>' + (it.a ? fmtQtd(it.a, 0) : '—') + '</td>'
+        + '<td>' + fmtBRL(it.vp) + '</td><td>' + fmtBRL(it.fr) + '</td><td>' + fmtBRL(it.mu) + '</td>'
+        + '<td>' + fmtBRL(it.ins) + '</td><td>' + fmtBRL(it.mob) + '</td><td>' + fmtBRL(it.art) + '</td>'
+        + '<td>' + fmtBRL(it.lt) + '</td><td>' + fmtBRL(it.rd) + '</td>'
+        + '<td class="tp-td-total">' + fmtBRL(it.tot) + '</td>'
+        + '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+    tpAtualizarResumo();
+  }
+
+  function tpToggleItem(idx) {
+    if (tpState.selecionados.has(idx)) tpState.selecionados.delete(idx);
+    else tpState.selecionados.add(idx);
+    tpRenderTabela();
+  }
+
+  function tpLimparSelecao() {
+    tpState.selecionados = new Set();
+    tpRenderTabela();
+  }
+
+  function tpAtualizarResumo() {
+    const wrap = document.getElementById('tp-resumo-wrap');
+    if (!wrap) return;
+    const itens = tpState.regiao ? (TP_BK_MANUTENCAO[tpState.regiao] || []) : [];
+    const selecionadosArr = Array.from(tpState.selecionados).filter(function(i){ return itens[i]; }).sort(function(a,b){ return a-b; });
+
+    if (!tpState.regiao) {
+      wrap.innerHTML = '<div class="tp-resumo-vazio">Informe a cidade e o estado para começar a selecionar produtos.</div>';
+      return;
+    }
+    if (!selecionadosArr.length) {
+      wrap.innerHTML = '<div class="tp-resumo-vazio">Nenhum produto selecionado ainda. Clique nas linhas da tabela para adicionar à comparação.</div>';
+      return;
+    }
+
+    const somas = { vp:0, fr:0, mu:0, ins:0, mob:0, art:0, lt:0, rd:0, tot:0 };
+    let listaHtml = '';
+    selecionadosArr.forEach(function(idx) {
+      const it = itens[idx];
+      ['vp','fr','mu','ins','mob','art','lt','rd','tot'].forEach(function(k){ somas[k] += it[k]; });
+      listaHtml += '<div class="tp-resumo-item"><span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span><span class="valor">' + fmtBRL(it.tot) + '</span></div>';
+    });
+
+    wrap.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">'
+        + '<div style="font-size:12px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.4px;">🧾 ' + selecionadosArr.length + ' produto(s) selecionado(s) — Região ' + tpState.regiao.replace('-', ' ') + '</div>'
+        + '<button type="button" onclick="tpLimparSelecao()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;">✕ Limpar seleção</button>'
+      + '</div>'
+      + '<div class="tp-resumo-lista">' + listaHtml + '</div>'
+      + '<div class="tp-resumo-somas">'
+        + '<div class="tp-resumo-soma-item"><div class="label">Valor Produto</div><div class="valor">' + fmtBRL(somas.vp) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Frete</div><div class="valor">' + fmtBRL(somas.fr) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Munck</div><div class="valor">' + fmtBRL(somas.mu) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Instalação</div><div class="valor">' + fmtBRL(somas.ins) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Mobilização</div><div class="valor">' + fmtBRL(somas.mob) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">ART</div><div class="valor">' + fmtBRL(somas.art) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Laudo Técnico</div><div class="valor">' + fmtBRL(somas.lt) + '</div></div>'
+        + '<div class="tp-resumo-soma-item"><div class="label">Remoção/Descarte</div><div class="valor">' + fmtBRL(somas.rd) + '</div></div>'
+        + '<div class="tp-resumo-total"><span class="label">Total Geral</span><span class="valor">' + fmtBRL(somas.tot) + '</span></div>'
+      + '</div>';
+  }
+
 </script>
 
 </body>
