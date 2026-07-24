@@ -1159,27 +1159,57 @@
     letter-spacing: .3px;
   }
   .tp-regiao-badge.tp-regiao-vazia { background: var(--input-bg); color: var(--muted); }
-  .tp-table-scroll { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
+
+  /* Busca de produtos (autocomplete) */
+  .tp-busca-wrap { position: relative; }
+  .tp-busca-wrap input[type="text"] {
+    width: 100%; padding: 13px 16px; border: 1.5px solid transparent; border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--text); background-color: var(--input-bg); transition: border-color .15s, background .15s;
+  }
+  .tp-busca-wrap input[type="text"]:focus { outline: none; border-color: var(--brand-light); background-color: #fff; }
+  .tp-busca-wrap input[type="text"]:disabled { opacity: .55; cursor: not-allowed; }
+  .tp-busca-dropdown {
+    position: absolute; left: 0; right: 0; top: calc(100% + 6px);
+    background: #fff; border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-soft); max-height: 320px; overflow-y: auto; z-index: 30;
+  }
+  .tp-busca-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 14px; cursor: pointer; border-bottom: 1px solid var(--border-soft); }
+  .tp-busca-item:last-child { border-bottom: none; }
+  .tp-busca-item:hover, .tp-busca-item.is-active { background: var(--brand-tint); }
+  .tp-busca-item .tp-busca-info { min-width: 0; }
+  .tp-busca-item .nome { font-size: 13px; font-weight: 700; color: var(--text); }
+  .tp-busca-item .tipo { font-size: 11px; color: var(--muted); margin-top: 1px; white-space: normal; }
+  .tp-busca-item .total { font-size: 13px; font-weight: 800; color: var(--brand); white-space: nowrap; flex-shrink: 0; }
+  .tp-busca-item.ja-selecionado { background: var(--accent-tint); }
+  .tp-busca-item .ja-tag {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+    background: var(--accent); color: #fff; padding: 2px 7px; border-radius: 20px; margin-left: 8px; white-space: nowrap;
+  }
+  .tp-busca-vazio { padding: 18px; text-align: center; font-size: 12.5px; color: var(--muted); }
+  .tp-busca-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  .tp-table-scroll { overflow: auto; max-height: 460px; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
   table.tp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
   table.tp-table th {
     background: var(--brand-tint); color: var(--brand); font-size: 10.5px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .3px; padding: 10px 10px; text-align: right; position: sticky; top: 0;
+    text-transform: uppercase; letter-spacing: .3px; padding: 10px 10px; text-align: right; position: sticky; top: 0; z-index: 1;
   }
-  table.tp-table th:first-child, table.tp-table th:nth-child(2), table.tp-table th:nth-child(3) { text-align: left; }
+  table.tp-table th:first-child, table.tp-table th:nth-child(2) { text-align: left; }
   table.tp-table td { padding: 9px 10px; border-top: 1px solid var(--border-soft); text-align: right; color: var(--text); }
-  table.tp-table td:first-child, table.tp-table td:nth-child(2), table.tp-table td:nth-child(3) { text-align: left; }
+  table.tp-table td:first-child, table.tp-table td:nth-child(2) { text-align: left; }
   table.tp-table td.tp-td-total { font-weight: 800; color: var(--brand); }
   table.tp-table tbody tr { transition: background .12s; cursor: pointer; }
   table.tp-table tbody tr:hover { background: var(--brand-tint); }
   table.tp-table tbody tr.tp-row-selected { background: var(--accent-tint); }
   table.tp-table tbody tr.tp-row-selected td.tp-td-total { color: var(--accent); }
-  .tp-checkbox { width: 17px; height: 17px; accent-color: var(--accent); cursor: pointer; }
-  .tp-resumo-card { border: 1.5px solid var(--brand-light); background: var(--brand-tint); border-radius: var(--radius); padding: 16px 18px; position: sticky; bottom: 12px; box-shadow: var(--shadow-md); }
+  .tp-resumo-card { border: 1.5px solid var(--brand-light); background: var(--brand-tint); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow-sm); }
   .tp-resumo-vazio { color: var(--muted); font-size: 12.5px; text-align: center; padding: 6px 0; }
-  .tp-resumo-lista { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; max-height: 160px; overflow-y: auto; }
-  .tp-resumo-item { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; padding: 5px 8px; background: #fff; border-radius: 8px; }
-  .tp-resumo-item .nome { color: var(--text); font-weight: 600; }
+  .tp-resumo-lista { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; max-height: 220px; overflow-y: auto; }
+  .tp-resumo-item { display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 5px 8px; background: #fff; border-radius: 8px; }
+  .tp-resumo-item .nome { color: var(--text); font-weight: 600; flex: 1; min-width: 0; }
   .tp-resumo-item .valor { color: var(--brand); font-weight: 700; white-space: nowrap; }
+  .tp-resumo-item .remover { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; flex-shrink: 0; }
+  .tp-resumo-item .remover:hover { color: var(--accent); }
   .tp-resumo-somas { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; padding-top: 12px; border-top: 1.5px dashed rgba(27,43,110,.25); }
   .tp-resumo-soma-item { background: #fff; border-radius: 10px; padding: 8px 10px; }
   .tp-resumo-soma-item .label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: var(--muted); }
@@ -2532,9 +2562,27 @@
       </div>
     </div>
 
-    <div class="tp-table-scroll" style="margin-top:16px;" id="tp-tabela-wrap"></div>
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header"><span class="icon">🔎</span> Buscar Produto</div>
+      <div class="card-body tp-busca-wrap" id="tp-busca-wrap">
+        <input type="text" id="tp-busca-input" placeholder="Digite o nome do produto (ex: totem, letreiro, chapéu)..."
+          autocomplete="off"
+          oninput="tpFiltrarSugestoes()"
+          onfocus="tpFiltrarSugestoes()"
+          onkeydown="tpBuscaKeydown(event)">
+        <div class="tp-busca-dropdown" id="tp-busca-dropdown" style="display:none;"></div>
+        <div class="tp-busca-hint">Digite para ver sugestões, clique (ou aperte Enter) para adicionar. O campo limpa sozinho para você já digitar o próximo item.</div>
+      </div>
+    </div>
 
     <div class="tp-resumo-card" style="margin-top:16px;" id="tp-resumo-wrap"></div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header"><span class="icon">📋</span> Tabela completa da região <span style="margin-left:auto;font-weight:400;font-size:11px;color:var(--muted);">clique numa linha para adicionar/remover</span></div>
+      <div class="card-body" style="padding-top:0;">
+        <div class="tp-table-scroll" id="tp-tabela-wrap"></div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -6647,6 +6695,30 @@
       {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16000},
       {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16500},
       {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:17000},
+      {p:"CHAPÉU 5M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:140,a:154,vp:14285,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:32785},
+      {p:"CHAPÉU 6M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:164,a:180,vp:17142,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:35642},
+      {p:"CHAPÉU 7M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:191,a:210,vp:29000,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:47500},
+      {p:"CHAPÉU 8M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:218,a:240,vp:33142.86,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:51642.86},
+      {p:"CHAPÉU 10M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:223,a:245,vp:38500,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:62000},
+      {p:"CHAPÉU 12M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:273,a:300,vp:40000,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:63500},
+      {p:"CHAPÉU 15M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:334,a:367,vp:53051,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:76551},
+      {p:"CHAPÉU 20M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:446,a:490,vp:81457,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:104957},
+      {p:"2 GRAVATAS PARA 5M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 6M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 7M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 8M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:10297},
+      {p:"2 GRAVATAS PARA 10M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 12M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 15M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 20M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:66,vp:7900,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:13400},
+      {p:"POSTE PARA 5M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:346,vp:4200,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:22700},
+      {p:"POSTE PARA 6M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:420,vp:5040,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:23540},
+      {p:"POSTE PARA 7M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:490,vp:7000,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:25500},
+      {p:"POSTE PARA 8M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:560,vp:7999.6,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:26499.6},
+      {p:"POSTE PARA 10M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:755,vp:13650,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:37150},
+      {p:"POSTE PARA 12M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:900,vp:14999.6,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:38499.6},
+      {p:"POSTE PARA 15M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1133,vp:24710,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:48210},
+      {p:"POSTE PARA 20M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1510,vp:52500,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:76000},
     ],
     'SUDESTE': [
       {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:1500,mu:800,ins:300,mob:700,art:0,lt:0,rd:200,tot:15820},
@@ -6702,6 +6774,30 @@
       {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16000},
       {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:16500},
       {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:2500,mob:2000,art:0,lt:0,rd:0,tot:17000},
+      {p:"CHAPÉU 5M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:140,a:154,vp:14285,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:32785},
+      {p:"CHAPÉU 6M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:164,a:180,vp:17142,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:35642},
+      {p:"CHAPÉU 7M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:191,a:210,vp:29000,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:47500},
+      {p:"CHAPÉU 8M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:218,a:240,vp:33142.86,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:51642.86},
+      {p:"CHAPÉU 10M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:223,a:245,vp:38500,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:62000},
+      {p:"CHAPÉU 12M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:273,a:300,vp:40000,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:63500},
+      {p:"CHAPÉU 15M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:334,a:367,vp:53051,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:76551},
+      {p:"CHAPÉU 20M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:446,a:490,vp:81457,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:104957},
+      {p:"2 GRAVATAS PARA 5M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 6M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 7M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 8M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:1500,ins:500,mob:0,art:0,lt:0,rd:0,tot:10297},
+      {p:"2 GRAVATAS PARA 10M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 12M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 15M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 20M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:66,vp:7900,fr:2000,mu:3000,ins:500,mob:0,art:0,lt:0,rd:0,tot:13400},
+      {p:"POSTE PARA 5M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:346,vp:4200,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:22700},
+      {p:"POSTE PARA 6M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:420,vp:5040,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:23540},
+      {p:"POSTE PARA 7M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:490,vp:7000,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:25500},
+      {p:"POSTE PARA 8M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:560,vp:7999.6,fr:8000,mu:3000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:26499.6},
+      {p:"POSTE PARA 10M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:755,vp:13650,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:37150},
+      {p:"POSTE PARA 12M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:900,vp:14999.6,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:38499.6},
+      {p:"POSTE PARA 15M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1133,vp:24710,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:48210},
+      {p:"POSTE PARA 20M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1510,vp:52500,fr:10000,mu:6000,ins:3000,mob:1000,art:500,lt:2500,rd:500,tot:76000},
     ],
     'NORDESTE': [
       {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:19320},
@@ -6757,6 +6853,30 @@
       {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:16000},
       {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:16500},
       {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:4000,mob:4500,art:0,lt:0,rd:0,tot:17000},
+      {p:"CHAPÉU 5M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:140,a:154,vp:14285,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:32785},
+      {p:"CHAPÉU 6M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:164,a:180,vp:17142,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:35642},
+      {p:"CHAPÉU 7M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:191,a:210,vp:29000,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:47500},
+      {p:"CHAPÉU 8M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:218,a:240,vp:33142.86,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:51642.86},
+      {p:"CHAPÉU 10M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:223,a:245,vp:38500,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:62000},
+      {p:"CHAPÉU 12M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:273,a:300,vp:40000,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:63500},
+      {p:"CHAPÉU 15M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:334,a:367,vp:53051,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:76551},
+      {p:"CHAPÉU 20M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:446,a:490,vp:81457,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:104957},
+      {p:"2 GRAVATAS PARA 5M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 6M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 7M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 8M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:10297},
+      {p:"2 GRAVATAS PARA 10M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 12M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 15M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 20M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:66,vp:7900,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:13400},
+      {p:"POSTE PARA 5M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:346,vp:4200,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:22700},
+      {p:"POSTE PARA 6M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:420,vp:5040,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:23540},
+      {p:"POSTE PARA 7M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:490,vp:7000,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:25500},
+      {p:"POSTE PARA 8M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:560,vp:7999.6,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:26499.6},
+      {p:"POSTE PARA 10M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:755,vp:13650,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:37150},
+      {p:"POSTE PARA 12M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:900,vp:14999.6,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:38499.6},
+      {p:"POSTE PARA 15M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1133,vp:24710,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:48210},
+      {p:"POSTE PARA 20M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1510,vp:52500,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:76000},
     ],
     'NORTE': [
       {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:3000,mu:1600,ins:600,mob:1400,art:0,lt:0,rd:400,tot:19320},
@@ -6812,6 +6932,30 @@
       {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:16000},
       {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:16500},
       {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:4000,mob:7000,art:0,lt:0,rd:0,tot:17000},
+      {p:"CHAPÉU 5M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:140,a:154,vp:14285,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:32785},
+      {p:"CHAPÉU 6M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:164,a:180,vp:17142,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:35642},
+      {p:"CHAPÉU 7M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:191,a:210,vp:29000,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:47500},
+      {p:"CHAPÉU 8M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:218,a:240,vp:33142.86,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:51642.86},
+      {p:"CHAPÉU 10M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:223,a:245,vp:38500,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:62000},
+      {p:"CHAPÉU 12M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:273,a:300,vp:40000,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:63500},
+      {p:"CHAPÉU 15M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:334,a:367,vp:53051,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:76551},
+      {p:"CHAPÉU 20M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:446,a:490,vp:81457,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:104957},
+      {p:"2 GRAVATAS PARA 5M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 6M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 7M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 8M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:3000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:10297},
+      {p:"2 GRAVATAS PARA 10M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 12M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 15M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 20M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:66,vp:7900,fr:4000,mu:6000,ins:1000,mob:0,art:0,lt:0,rd:0,tot:13400},
+      {p:"POSTE PARA 5M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:346,vp:4200,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:22700},
+      {p:"POSTE PARA 6M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:420,vp:5040,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:23540},
+      {p:"POSTE PARA 7M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:490,vp:7000,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:25500},
+      {p:"POSTE PARA 8M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:560,vp:7999.6,fr:16000,mu:6000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:26499.6},
+      {p:"POSTE PARA 10M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:755,vp:13650,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:37150},
+      {p:"POSTE PARA 12M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:900,vp:14999.6,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:38499.6},
+      {p:"POSTE PARA 15M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1133,vp:24710,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:48210},
+      {p:"POSTE PARA 20M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1510,vp:52500,fr:20000,mu:12000,ins:6000,mob:2000,art:500,lt:2500,rd:1000,tot:76000},
     ],
     'CENTRO-OESTE': [
       {p:"LETREIRO BURGER KING",t:"FRENTE ACRILICO, ILUMINAÇÃO INTERNA",l:800,a:100,vp:12320,fr:2500,mu:1000,ins:850,mob:700,art:0,lt:0,rd:200,tot:17570},
@@ -6867,6 +7011,30 @@
       {p:"PINTURA TUBO 12M",t:"PINTURA",l:0,a:0,vp:5500,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:16000},
       {p:"PINTURA TUBO 15M",t:"PINTURA",l:0,a:0,vp:6000,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:16500},
       {p:"PINTURA TUBO 20M",t:"PINTURA",l:0,a:0,vp:6500,fr:0,mu:6000,ins:3500,mob:4000,art:0,lt:0,rd:0,tot:17000},
+      {p:"CHAPÉU 5M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:140,a:154,vp:14285,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:32785},
+      {p:"CHAPÉU 6M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:164,a:180,vp:17142,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:35642},
+      {p:"CHAPÉU 7M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:191,a:210,vp:29000,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:47500},
+      {p:"CHAPÉU 8M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:218,a:240,vp:33142.86,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:51642.86},
+      {p:"CHAPÉU 10M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:223,a:245,vp:38500,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:62000},
+      {p:"CHAPÉU 12M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:273,a:300,vp:40000,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:63500},
+      {p:"CHAPÉU 15M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:334,a:367,vp:53051,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:76551},
+      {p:"CHAPÉU 20M",t:"CHAPÉU ACM VAZADO COM ILUMINAÇÃO INTERNA",l:446,a:490,vp:81457,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:104957},
+      {p:"2 GRAVATAS PARA 5M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:3000,mu:2250,ins:750,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 6M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:3000,mu:2250,ins:750,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 7M",t:"BACKLIGHT FRENTE POLICARBONATO",l:120,a:33,vp:4000,fr:3000,mu:2250,ins:750,mob:0,art:0,lt:0,rd:0,tot:8000},
+      {p:"2 GRAVATAS PARA 8M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:3000,mu:2250,ins:750,mob:0,art:0,lt:0,rd:0,tot:10297},
+      {p:"2 GRAVATAS PARA 10M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:3000,mu:4500,ins:750,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 12M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:3000,mu:4500,ins:750,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 15M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:50,vp:6297,fr:3000,mu:4500,ins:750,mob:0,art:0,lt:0,rd:0,tot:11797},
+      {p:"2 GRAVATAS PARA 20M",t:"BACKLIGHT FRENTE POLICARBONATO",l:200,a:66,vp:7900,fr:3000,mu:4500,ins:750,mob:0,art:0,lt:0,rd:0,tot:13400},
+      {p:"POSTE PARA 5M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:346,vp:4200,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:22700},
+      {p:"POSTE PARA 6M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:420,vp:5040,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:23540},
+      {p:"POSTE PARA 7M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:490,vp:7000,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:25500},
+      {p:"POSTE PARA 8M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:560,vp:7999.6,fr:12000,mu:4500,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:26499.6},
+      {p:"POSTE PARA 10M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:755,vp:13650,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:37150},
+      {p:"POSTE PARA 12M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:900,vp:14999.6,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:38499.6},
+      {p:"POSTE PARA 15M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1133,vp:24710,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:48210},
+      {p:"POSTE PARA 20M",t:"TUBO METÁLICO COM PINTURA PU",l:0,a:1510,vp:52500,fr:15000,mu:9000,ins:4500,mob:1500,art:500,lt:2500,rd:750,tot:76000},
     ],
   };
 
@@ -6876,7 +7044,17 @@
     tabela: null,
     regiao: null,
     selecionados: new Set(),
+    buscaResultados: [],
+    buscaAtivoIdx: -1,
   };
+
+  // Fecha o dropdown de busca ao clicar fora dele
+  document.addEventListener('click', function(e) {
+    const wrap = document.getElementById('tp-busca-wrap');
+    const dropdown = document.getElementById('tp-busca-dropdown');
+    if (!wrap || !dropdown) return;
+    if (!wrap.contains(e.target)) dropdown.style.display = 'none';
+  });
 
   function tpRenderBreadcrumb() {
     const el = document.getElementById('tp-breadcrumb');
@@ -6927,7 +7105,13 @@
     tpState.nivel = 'manutencao';
     tpState.tabela = tabela;
     tpState.selecionados = new Set();
+    tpState.buscaResultados = [];
+    tpState.buscaAtivoIdx = -1;
     tpRenderBreadcrumb();
+    const inputEl = document.getElementById('tp-busca-input');
+    if (inputEl) inputEl.value = '';
+    const dropdown = document.getElementById('tp-busca-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
     tpAtualizarRegiao();
   }
 
@@ -6939,6 +7123,8 @@
   function tpAtualizarRegiao() {
     const uf = (document.getElementById('tp-uf')?.value || '').toUpperCase();
     const badge = document.getElementById('tp-regiao-badge');
+    const inputEl = document.getElementById('tp-busca-input');
+    const dropdown = document.getElementById('tp-busca-dropdown');
     const regiaoUF = uf ? opRegiaoPorUF(uf) : null;
     const chave = tpChaveRegiao(regiaoUF);
     tpState.regiao = chave;
@@ -6951,7 +7137,13 @@
         badge.classList.add('tp-regiao-vazia');
       }
     }
+    if (inputEl) inputEl.disabled = !chave;
+    if (!chave && dropdown) dropdown.style.display = 'none';
     tpRenderTabela();
+  }
+
+  function tpNormalizar(str) {
+    return (str || '').toString().toLowerCase().normalize('NFD').replace(new RegExp(String.fromCharCode(91) + String.fromCharCode(92) + 'u0300-' + String.fromCharCode(92) + 'u036f' + String.fromCharCode(93), 'g'), '');
   }
 
   function tpRenderTabela() {
@@ -6964,14 +7156,13 @@
     }
     const itens = TP_BK_MANUTENCAO[tpState.regiao] || [];
     let html = '<table class="tp-table"><thead><tr>'
-      + '<th></th><th>Produto</th><th>Tipo</th><th>Larg. (cm)</th><th>Alt. (cm)</th>'
+      + '<th>Produto</th><th>Tipo</th><th>Larg. (cm)</th><th>Alt. (cm)</th>'
       + '<th>Valor Produto</th><th>Frete</th><th>Munck</th><th>Instalação</th><th>Mobilização</th>'
       + '<th>ART</th><th>Laudo Técnico</th><th>Remoção/Descarte</th><th>Total</th>'
       + '</tr></thead><tbody>';
     itens.forEach(function(it, idx) {
       const sel = tpState.selecionados.has(idx);
-      html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')">'
-        + '<td onclick="event.stopPropagation()"><input type="checkbox" class="tp-checkbox" ' + (sel ? 'checked' : '') + ' onchange="tpToggleItem(' + idx + ')"></td>'
+      html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')" title="Clique para ' + (sel ? 'remover' : 'adicionar') + '">'
         + '<td>' + escHtml(it.p) + '</td><td>' + escHtml(it.t) + '</td>'
         + '<td>' + (it.l ? fmtQtd(it.l, 0) : '—') + '</td><td>' + (it.a ? fmtQtd(it.a, 0) : '—') + '</td>'
         + '<td>' + fmtBRL(it.vp) + '</td><td>' + fmtBRL(it.fr) + '</td><td>' + fmtBRL(it.mu) + '</td>'
@@ -6991,8 +7182,99 @@
     tpRenderTabela();
   }
 
+  function tpRemoverItem(idx) {
+    tpState.selecionados.delete(idx);
+    tpRenderTabela();
+  }
+
   function tpLimparSelecao() {
     tpState.selecionados = new Set();
+    tpRenderTabela();
+  }
+
+  // ── Busca de produtos (autocomplete) ────────────────────────────────────
+  function tpFiltrarSugestoes() {
+    const dropdown = document.getElementById('tp-busca-dropdown');
+    const inputEl  = document.getElementById('tp-busca-input');
+    if (!dropdown || !inputEl) return;
+    if (!tpState.regiao) { dropdown.style.display = 'none'; return; }
+
+    const termo = tpNormalizar(inputEl.value.trim());
+    const itens = TP_BK_MANUTENCAO[tpState.regiao] || [];
+    let candidatos = itens.map(function(it, idx) { return { idx: idx, item: it }; });
+    if (termo) {
+      candidatos = candidatos.filter(function(c) {
+        return tpNormalizar(c.item.p).includes(termo) || tpNormalizar(c.item.t).includes(termo);
+      });
+    }
+    candidatos = candidatos.slice(0, 40);
+    tpState.buscaResultados = candidatos;
+    tpState.buscaAtivoIdx = candidatos.length ? 0 : -1;
+    tpRenderSugestoes();
+  }
+
+  function tpRenderSugestoes() {
+    const dropdown = document.getElementById('tp-busca-dropdown');
+    if (!dropdown) return;
+    const lista = tpState.buscaResultados || [];
+    if (!lista.length) {
+      dropdown.innerHTML = '<div class="tp-busca-vazio">Nenhum produto encontrado.</div>';
+      dropdown.style.display = 'block';
+      return;
+    }
+    let html = '';
+    lista.forEach(function(c, pos) {
+      const jaSel = tpState.selecionados.has(c.idx);
+      const ativa = pos === tpState.buscaAtivoIdx;
+      html += '<div class="tp-busca-item' + (jaSel ? ' ja-selecionado' : '') + (ativa ? ' is-active' : '') + '" '
+        + 'onmousedown="event.preventDefault(); tpEscolherSugestao(' + c.idx + ')">'
+        + '<div class="tp-busca-info"><div class="nome">' + escHtml(c.item.p) + (jaSel ? '<span class="ja-tag">✓ selecionado</span>' : '') + '</div>'
+        + '<div class="tipo">' + escHtml(c.item.t) + '</div></div>'
+        + '<div class="total">' + fmtBRL(c.item.tot) + '</div>'
+        + '</div>';
+    });
+    dropdown.innerHTML = html;
+    dropdown.style.display = 'block';
+  }
+
+  function tpScrollAtivoIntoView() {
+    const dropdown = document.getElementById('tp-busca-dropdown');
+    if (!dropdown) return;
+    const ativo = dropdown.querySelector('.tp-busca-item.is-active');
+    if (ativo) ativo.scrollIntoView({ block: 'nearest' });
+  }
+
+  function tpBuscaKeydown(event) {
+    const lista = tpState.buscaResultados || [];
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (!lista.length) return;
+      tpState.buscaAtivoIdx = (tpState.buscaAtivoIdx + 1) % lista.length;
+      tpRenderSugestoes();
+      tpScrollAtivoIntoView();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!lista.length) return;
+      tpState.buscaAtivoIdx = (tpState.buscaAtivoIdx - 1 + lista.length) % lista.length;
+      tpRenderSugestoes();
+      tpScrollAtivoIntoView();
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (tpState.buscaAtivoIdx >= 0 && lista[tpState.buscaAtivoIdx]) {
+        tpEscolherSugestao(lista[tpState.buscaAtivoIdx].idx);
+      }
+    } else if (event.key === 'Escape') {
+      const dropdown = document.getElementById('tp-busca-dropdown');
+      if (dropdown) dropdown.style.display = 'none';
+    }
+  }
+
+  function tpEscolherSugestao(idx) {
+    tpState.selecionados.add(idx);
+    const inputEl = document.getElementById('tp-busca-input');
+    if (inputEl) inputEl.value = '';
+    tpFiltrarSugestoes();
+    if (inputEl) inputEl.focus();
     tpRenderTabela();
   }
 
@@ -7007,7 +7289,7 @@
       return;
     }
     if (!selecionadosArr.length) {
-      wrap.innerHTML = '<div class="tp-resumo-vazio">Nenhum produto selecionado ainda. Clique nas linhas da tabela para adicionar à comparação.</div>';
+      wrap.innerHTML = '<div class="tp-resumo-vazio">Nenhum produto selecionado ainda. Busque acima ou clique nas linhas da tabela para adicionar à comparação.</div>';
       return;
     }
 
@@ -7016,7 +7298,11 @@
     selecionadosArr.forEach(function(idx) {
       const it = itens[idx];
       ['vp','fr','mu','ins','mob','art','lt','rd','tot'].forEach(function(k){ somas[k] += it[k]; });
-      listaHtml += '<div class="tp-resumo-item"><span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span><span class="valor">' + fmtBRL(it.tot) + '</span></div>';
+      listaHtml += '<div class="tp-resumo-item">'
+        + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span>'
+        + '<span class="valor">' + fmtBRL(it.tot) + '</span>'
+        + '<button type="button" class="remover" onclick="tpRemoverItem(' + idx + ')" title="Remover">✕</button>'
+        + '</div>';
     });
 
     wrap.innerHTML =
