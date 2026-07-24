@@ -113,6 +113,7 @@
     --accent:      #E5006C;
     --accent-dark: #b8004f;
     --bg:          #f6f7fb;
+    --input-bg:    #e6e9f2;
     --card:        #ffffff;
     --border:      #e7eaf2;
     --border-soft: #eef0f6;
@@ -405,7 +406,7 @@
     border-radius: var(--radius-sm);
     font-size: 15px;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     transition: border-color .15s, background .15s;
     -moz-appearance: textfield;
   }
@@ -430,7 +431,7 @@
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background-color: var(--bg);
+    background-color: var(--input-bg);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%238189a0'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
@@ -669,7 +670,7 @@
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     box-sizing: border-box;
     margin-top: 4px;
     transition: border-color .15s, background .15s;
@@ -687,7 +688,7 @@
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background-color: var(--bg);
+    background-color: var(--input-bg);
     margin-top: 4px;
     transition: border-color .15s, background .15s;
   }
@@ -700,7 +701,7 @@
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     box-sizing: border-box;
     margin-top: 4px;
     transition: border-color .15s, background .15s;
@@ -715,7 +716,7 @@
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     box-sizing: border-box;
     margin-top: 4px;
     transition: border-color .15s, background .15s;
@@ -730,7 +731,7 @@
     font-weight: 600;
     font-family: inherit;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     box-sizing: border-box;
     margin-top: 4px;
     transition: border-color .15s, background .15s;
@@ -985,7 +986,7 @@
     font-size: 15px;
     font-family: inherit;
     color: var(--text);
-    background: var(--bg);
+    background: var(--input-bg);
     box-sizing: border-box;
     transition: border-color .15s, background .15s;
     letter-spacing: .5px;
@@ -1146,7 +1147,7 @@
     border-radius: var(--radius-sm);
     font-size: 13px;
     color: var(--text);
-    background-color: var(--bg);
+    background-color: var(--input-bg);
     transition: border-color .15s, background .15s;
     -moz-appearance: textfield;
   }
@@ -2235,6 +2236,8 @@
         <input type="date" id="filtro-ate" class="filter-input" onchange="renderListaRM()">
         <span class="filter-label">Pedido:</span>
         <input type="text" id="filtro-pedido" class="filter-input" placeholder="Nº pedido..." oninput="renderListaRM()" style="width:140px;">
+        <span class="filter-label">Nome:</span>
+        <input type="text" id="filtro-nome" class="filter-input" placeholder="Buscar por nome..." oninput="renderListaRM()" style="width:180px;">
         <button class="btn-filtro-limpar" onclick="limparFiltrosLista()">✕ Limpar filtro</button>
       </div>
     </div>
@@ -2262,6 +2265,8 @@
         <input type="date" id="filtro-op-ate" class="filter-input" onchange="renderListaOperacionais()">
         <span class="filter-label">Pedido:</span>
         <input type="text" id="filtro-op-pedido" class="filter-input" placeholder="Nº pedido..." oninput="renderListaOperacionais()" style="width:140px;">
+        <span class="filter-label">Nome:</span>
+        <input type="text" id="filtro-op-nome" class="filter-input" placeholder="Buscar por nome..." oninput="renderListaOperacionais()" style="width:180px;">
         <button class="btn-filtro-limpar" onclick="limparFiltrosListaOperacionais()">✕ Limpar filtro</button>
       </div>
     </div>
@@ -5401,12 +5406,15 @@
     if (!container) return;
     const de       = document.getElementById('filtro-op-de')?.value     || '';
     const ate      = document.getElementById('filtro-op-ate')?.value    || '';
-    const pedBusca = (document.getElementById('filtro-op-pedido')?.value || '').trim().toLowerCase();
+    const pedBusca  = (document.getElementById('filtro-op-pedido')?.value || '').trim().toLowerCase();
+    const nomeBusca = (document.getElementById('filtro-op-nome')?.value   || '').trim().toLowerCase();
     let lista = savedOperacionaisList.slice();
     if (de)       lista = lista.filter(e => new Date(e.dataSalvo) >= new Date(de  + 'T00:00:00'));
     if (ate)      lista = lista.filter(e => new Date(e.dataSalvo) <= new Date(ate + 'T23:59:59'));
     if (pedBusca) lista = lista.filter(e => (e.pedido || '').toLowerCase().includes(pedBusca)
                                          || (e.job    || '').toLowerCase().includes(pedBusca));
+    if (nomeBusca) lista = lista.filter(e => (e.empresa || '').toLowerCase().includes(nomeBusca)
+                                          || (e.job     || '').toLowerCase().includes(nomeBusca));
     if (lista.length === 0) {
       const msg = savedOperacionaisList.length === 0
         ? '<div class="big">🚚</div><p>Nenhum custo operacional salvo ainda.<br>Clique em <strong>💾 Salvar Operacionais</strong> (na aba Custos Operacionais) para registrar um aqui.</p>'
@@ -5447,7 +5455,7 @@
   }
 
   function limparFiltrosListaOperacionais() {
-    ['filtro-op-de','filtro-op-ate','filtro-op-pedido'].forEach(id => {
+    ['filtro-op-de','filtro-op-ate','filtro-op-pedido','filtro-op-nome'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -5812,12 +5820,15 @@
     if (!container) return;
     const de       = document.getElementById('filtro-de')?.value     || '';
     const ate      = document.getElementById('filtro-ate')?.value    || '';
-    const pedBusca = (document.getElementById('filtro-pedido')?.value || '').trim().toLowerCase();
+    const pedBusca  = (document.getElementById('filtro-pedido')?.value || '').trim().toLowerCase();
+    const nomeBusca = (document.getElementById('filtro-nome')?.value   || '').trim().toLowerCase();
     let lista = savedRMList.slice();
     if (de)       lista = lista.filter(e => new Date(e.dataSalvo) >= new Date(de  + 'T00:00:00'));
     if (ate)      lista = lista.filter(e => new Date(e.dataSalvo) <= new Date(ate + 'T23:59:59'));
     if (pedBusca) lista = lista.filter(e => (e.pedido || '').toLowerCase().includes(pedBusca)
                                          || (e.job    || '').toLowerCase().includes(pedBusca));
+    if (nomeBusca) lista = lista.filter(e => (e.empresa || '').toLowerCase().includes(nomeBusca)
+                                          || (e.job     || '').toLowerCase().includes(nomeBusca));
     if (lista.length === 0) {
       const msg = savedRMList.length === 0
         ? '<div class="big">📋</div><p>Nenhum orçamento salvo ainda.<br>Clique em <strong>💾 Salvar Orçamento</strong> para registrar um orçamento.</p>'
@@ -5949,7 +5960,7 @@
   }
 
   function limparFiltrosLista() {
-    ['filtro-de','filtro-ate','filtro-pedido'].forEach(id => {
+    ['filtro-de','filtro-ate','filtro-pedido','filtro-nome'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
