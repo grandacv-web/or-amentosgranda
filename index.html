@@ -1122,7 +1122,8 @@
   }
 
   /* -- Tabelas Padrão -- */
-  #view-tabelas-padrao { max-width: 1180px; margin: 20px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 18px; }
+  #view-tabelas-padrao { max-width: 1620px; margin: 20px auto 40px; padding: 0 20px; display: flex; flex-direction: column; gap: 18px; }
+  #view-tabelas-padrao .tp-regiao-card, #view-tabelas-padrao .tp-busca-wrap { max-width: 900px; }
   .tp-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--muted); flex-wrap: wrap; }
   .tp-breadcrumb .tp-crumb { color: var(--brand); cursor: pointer; }
   .tp-breadcrumb .tp-crumb:hover { text-decoration: underline; }
@@ -1160,7 +1161,9 @@
   }
   .tp-regiao-badge.tp-regiao-vazia { background: var(--input-bg); color: var(--muted); }
 
-  /* Busca de produtos (autocomplete) */
+  /* Busca de produtos (autocomplete) — o card não pode cortar (overflow:hidden)
+     o dropdown de sugestões, que fica posicionado absolute abaixo do input. */
+  .tp-busca-card { overflow: visible; }
   .tp-busca-wrap { position: relative; }
   .tp-busca-wrap input[type="text"] {
     width: 100%; padding: 13px 16px; border: 1.5px solid transparent; border-radius: var(--radius-sm);
@@ -1188,15 +1191,20 @@
   .tp-busca-vazio { padding: 18px; text-align: center; font-size: 12.5px; color: var(--muted); }
   .tp-busca-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
-  .tp-table-scroll { overflow: auto; max-height: 460px; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
-  table.tp-table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  .tp-table-scroll { overflow-y: auto; overflow-x: hidden; max-height: 520px; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
+  table.tp-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 12px; }
   table.tp-table th {
-    background: var(--brand-tint); color: var(--brand); font-size: 10.5px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: .3px; padding: 10px 10px; text-align: right; position: sticky; top: 0; z-index: 1;
+    background: var(--brand-tint); color: var(--brand); font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .2px; padding: 9px 6px; text-align: right; position: sticky; top: 0; z-index: 1;
+    white-space: normal; line-height: 1.2;
   }
   table.tp-table th:first-child, table.tp-table th:nth-child(2) { text-align: left; }
-  table.tp-table td { padding: 9px 10px; border-top: 1px solid var(--border-soft); text-align: right; color: var(--text); }
+  table.tp-table td { padding: 8px 6px; border-top: 1px solid var(--border-soft); text-align: right; color: var(--text); white-space: normal; word-break: break-word; }
   table.tp-table td:first-child, table.tp-table td:nth-child(2) { text-align: left; }
+  table.tp-table th:first-child, table.tp-table td:first-child { width: 14%; }
+  table.tp-table th:nth-child(2), table.tp-table td:nth-child(2) { width: 18%; }
+  table.tp-table th:nth-child(3), table.tp-table td:nth-child(3) { width: 7%; }
+  table.tp-table th:nth-child(n+4), table.tp-table td:nth-child(n+4) { width: 6.78%; }
   table.tp-table td.tp-td-total { font-weight: 800; color: var(--brand); }
   table.tp-table tbody tr { transition: background .12s; cursor: pointer; }
   table.tp-table tbody tr:hover { background: var(--brand-tint); }
@@ -2562,7 +2570,7 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:16px;">
+    <div class="card tp-busca-card" style="margin-top:16px;">
       <div class="card-header"><span class="icon">🔎</span> Buscar Produto</div>
       <div class="card-body tp-busca-wrap" id="tp-busca-wrap">
         <input type="text" id="tp-busca-input" placeholder="Digite o nome do produto (ex: totem, letreiro, chapéu)..."
@@ -7156,15 +7164,16 @@
     }
     const itens = TP_BK_MANUTENCAO[tpState.regiao] || [];
     let html = '<table class="tp-table"><thead><tr>'
-      + '<th>Produto</th><th>Tipo</th><th>Larg. (cm)</th><th>Alt. (cm)</th>'
+      + '<th>Produto</th><th>Tipo</th><th>Dimensões</th>'
       + '<th>Valor Produto</th><th>Frete</th><th>Munck</th><th>Instalação</th><th>Mobilização</th>'
       + '<th>ART</th><th>Laudo Técnico</th><th>Remoção/Descarte</th><th>Total</th>'
       + '</tr></thead><tbody>';
     itens.forEach(function(it, idx) {
       const sel = tpState.selecionados.has(idx);
+      const dim = (it.l || it.a) ? (fmtQtd(it.l, 0) + ' × ' + fmtQtd(it.a, 0) + ' cm') : '—';
       html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')" title="Clique para ' + (sel ? 'remover' : 'adicionar') + '">'
         + '<td>' + escHtml(it.p) + '</td><td>' + escHtml(it.t) + '</td>'
-        + '<td>' + (it.l ? fmtQtd(it.l, 0) : '—') + '</td><td>' + (it.a ? fmtQtd(it.a, 0) : '—') + '</td>'
+        + '<td>' + dim + '</td>'
         + '<td>' + fmtBRL(it.vp) + '</td><td>' + fmtBRL(it.fr) + '</td><td>' + fmtBRL(it.mu) + '</td>'
         + '<td>' + fmtBRL(it.ins) + '</td><td>' + fmtBRL(it.mob) + '</td><td>' + fmtBRL(it.art) + '</td>'
         + '<td>' + fmtBRL(it.lt) + '</td><td>' + fmtBRL(it.rd) + '</td>'
