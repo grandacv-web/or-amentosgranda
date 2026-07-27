@@ -2592,7 +2592,7 @@
     <div class="tp-resumo-card tp-card-estreito" style="margin-top:16px;" id="tp-resumo-wrap"></div>
 
     <div class="card" style="margin-top:16px;">
-      <div class="card-header"><span class="icon">📋</span> Tabela completa da região <span style="margin-left:auto;font-weight:400;font-size:11px;color:var(--muted);">clique numa linha para adicionar/remover</span></div>
+      <div class="card-header"><span class="icon">📋</span> Tabela completa da região<span id="tp-tabela-titulo-regiao"></span> <span style="margin-left:auto;font-weight:400;font-size:11px;color:var(--muted);">clique numa linha para adicionar/remover</span></div>
       <div class="card-body" style="padding-top:0;">
         <div class="tp-table-scroll" id="tp-tabela-wrap"></div>
       </div>
@@ -7170,11 +7170,14 @@
   function tpRenderTabela() {
     const wrap = document.getElementById('tp-tabela-wrap');
     if (!wrap) return;
+    const tituloRegiao = document.getElementById('tp-tabela-titulo-regiao');
     if (!tpState.regiao) {
+      if (tituloRegiao) tituloRegiao.textContent = '';
       wrap.innerHTML = '<div class="tp-resumo-vazio" style="padding:36px 0;">Selecione a cidade e o estado de destino para exibir a tabela de preços da região correspondente.</div>';
       tpAtualizarResumo();
       return;
     }
+    if (tituloRegiao) tituloRegiao.textContent = ' — ' + tpState.regiao.replace('-', ' ');
     const itens = TP_BK_MANUTENCAO[tpState.regiao] || [];
     let html = '<table class="tp-table"><thead><tr>'
       + '<th>Produto</th><th>Tipo</th><th>Dimensões</th>'
