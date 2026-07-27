@@ -1181,6 +1181,7 @@
   .tp-busca-item:hover, .tp-busca-item.is-active { background: var(--brand-tint); }
   .tp-busca-item .tp-busca-info { min-width: 0; }
   .tp-busca-item .nome { font-size: 13px; font-weight: 700; color: var(--text); }
+  .tp-busca-dim { font-size: 12px; font-weight: 700; color: var(--brand); }
   .tp-busca-item .tipo { font-size: 11px; color: var(--muted); margin-top: 1px; white-space: normal; }
   .tp-busca-item .total { font-size: 13px; font-weight: 800; color: var(--brand); white-space: nowrap; flex-shrink: 0; }
   .tp-busca-item.ja-selecionado { background: var(--accent-tint); }
@@ -7159,6 +7160,13 @@
     return (str || '').toString().toLowerCase().normalize('NFD').replace(new RegExp(String.fromCharCode(91) + String.fromCharCode(92) + 'u0300-' + String.fromCharCode(92) + 'u036f' + String.fromCharCode(93), 'g'), '');
   }
 
+  // Formata "largura × altura (cm)" de um item da tabela padrão — usado em todos os
+  // pontos que listam produtos (tabela, busca/autocomplete e resumo de selecionados),
+  // já que produto+tipo se repetem e só a dimensão distingue as opções.
+  function tpDimStr(it) {
+    return (it.l || it.a) ? (fmtQtd(it.l, 0) + ' × ' + fmtQtd(it.a, 0) + ' cm') : '—';
+  }
+
   function tpRenderTabela() {
     const wrap = document.getElementById('tp-tabela-wrap');
     if (!wrap) return;
@@ -7175,7 +7183,7 @@
       + '</tr></thead><tbody>';
     itens.forEach(function(it, idx) {
       const sel = tpState.selecionados.has(idx);
-      const dim = (it.l || it.a) ? (fmtQtd(it.l, 0) + ' × ' + fmtQtd(it.a, 0) + ' cm') : '—';
+      const dim = tpDimStr(it);
       html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')" title="Clique para ' + (sel ? 'remover' : 'adicionar') + '">'
         + '<td>' + escHtml(it.p) + '</td><td>' + escHtml(it.t) + '</td>'
         + '<td>' + dim + '</td>'
@@ -7242,7 +7250,7 @@
       const ativa = pos === tpState.buscaAtivoIdx;
       html += '<div class="tp-busca-item' + (jaSel ? ' ja-selecionado' : '') + (ativa ? ' is-active' : '') + '" '
         + 'onmousedown="event.preventDefault(); tpEscolherSugestao(' + c.idx + ')">'
-        + '<div class="tp-busca-info"><div class="nome">' + escHtml(c.item.p) + (jaSel ? '<span class="ja-tag">✓ selecionado</span>' : '') + '</div>'
+        + '<div class="tp-busca-info"><div class="nome">' + escHtml(c.item.p) + ' <span class="tp-busca-dim">— ' + tpDimStr(c.item) + '</span>' + (jaSel ? '<span class="ja-tag">✓ selecionado</span>' : '') + '</div>'
         + '<div class="tipo">' + escHtml(c.item.t) + '</div></div>'
         + '<div class="total">' + fmtBRL(c.item.tot) + '</div>'
         + '</div>';
@@ -7328,7 +7336,7 @@
         .join('');
       listaHtml += '<div class="tp-resumo-item">'
         + '<div class="tp-resumo-item-top">'
-          + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span>'
+          + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + ' <span class="tp-busca-dim">(' + tpDimStr(it) + ')</span></span>'
           + '<span class="valor">' + fmtBRL(it.tot) + '</span>'
           + '<button type="button" class="remover" onclick="tpRemoverItem(' + idx + ')" title="Remover">✕</button>'
         + '</div>'
