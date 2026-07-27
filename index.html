@@ -1214,11 +1214,15 @@
   .tp-resumo-card { border: 1.5px solid var(--brand-light); background: var(--brand-tint); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow-sm); }
   .tp-resumo-vazio { color: var(--muted); font-size: 12.5px; text-align: center; padding: 6px 0; }
   .tp-resumo-lista { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; max-height: 220px; overflow-y: auto; }
-  .tp-resumo-item { display: flex; align-items: center; gap: 10px; font-size: 12px; padding: 5px 8px; background: #fff; border-radius: 8px; }
+  .tp-resumo-item { display: flex; flex-direction: column; gap: 5px; font-size: 12px; padding: 7px 8px; background: #fff; border-radius: 8px; }
+  .tp-resumo-item-top { display: flex; align-items: center; gap: 10px; }
   .tp-resumo-item .nome { color: var(--text); font-weight: 600; flex: 1; min-width: 0; }
   .tp-resumo-item .valor { color: var(--brand); font-weight: 700; white-space: nowrap; }
   .tp-resumo-item .remover { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; flex-shrink: 0; }
   .tp-resumo-item .remover:hover { color: var(--accent); }
+  .tp-resumo-item-ops { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 2px; }
+  .tp-resumo-item-op { font-size: 10px; font-weight: 600; color: var(--muted); background: #f2f3f8; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+  .tp-resumo-item-op strong { color: var(--text); font-weight: 700; }
   .tp-resumo-somas { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; padding-top: 12px; border-top: 1.5px dashed rgba(27,43,110,.25); }
   .tp-resumo-soma-item { background: #fff; border-radius: 10px; padding: 8px 10px; }
   .tp-resumo-soma-item .label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; color: var(--muted); }
@@ -7304,14 +7308,31 @@
     }
 
     const somas = { vp:0, fr:0, mu:0, ins:0, mob:0, art:0, lt:0, rd:0, tot:0 };
+    const OP_LABELS = [
+      { k:'vp',  label:'Produto' },
+      { k:'fr',  label:'Frete' },
+      { k:'mu',  label:'Munck' },
+      { k:'ins', label:'Instalação' },
+      { k:'mob', label:'Mobilização' },
+      { k:'art', label:'ART' },
+      { k:'lt',  label:'Laudo Técnico' },
+      { k:'rd',  label:'Remoção/Descarte' }
+    ];
     let listaHtml = '';
     selecionadosArr.forEach(function(idx) {
       const it = itens[idx];
       ['vp','fr','mu','ins','mob','art','lt','rd','tot'].forEach(function(k){ somas[k] += it[k]; });
+      const opsHtml = OP_LABELS
+        .filter(function(o){ return it[o.k] > 0; })
+        .map(function(o){ return '<span class="tp-resumo-item-op">' + o.label + ': <strong>' + fmtBRL(it[o.k]) + '</strong></span>'; })
+        .join('');
       listaHtml += '<div class="tp-resumo-item">'
-        + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span>'
-        + '<span class="valor">' + fmtBRL(it.tot) + '</span>'
-        + '<button type="button" class="remover" onclick="tpRemoverItem(' + idx + ')" title="Remover">✕</button>'
+        + '<div class="tp-resumo-item-top">'
+          + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + '</span>'
+          + '<span class="valor">' + fmtBRL(it.tot) + '</span>'
+          + '<button type="button" class="remover" onclick="tpRemoverItem(' + idx + ')" title="Remover">✕</button>'
+        + '</div>'
+        + (opsHtml ? '<div class="tp-resumo-item-ops">' + opsHtml + '</div>' : '')
         + '</div>';
     });
 
