@@ -1221,6 +1221,11 @@
   .tp-resumo-item .valor { color: var(--brand); font-weight: 700; white-space: nowrap; }
   .tp-resumo-item .remover { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px 4px; flex-shrink: 0; }
   .tp-resumo-item .remover:hover { color: var(--accent); }
+  .tp-resumo-qtd { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .tp-resumo-qtd button { width: 20px; height: 20px; border: 1px solid var(--border); background: #fff; border-radius: 6px; color: var(--brand); font-weight: 800; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .tp-resumo-qtd button:hover { background: var(--brand-tint); }
+  .tp-resumo-qtd input { width: 34px; text-align: center; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--text); padding: 2px 0; }
+  .tp-resumo-qtd input::-webkit-outer-spin-button, .tp-resumo-qtd input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .tp-resumo-item-ops { display: flex; flex-wrap: wrap; gap: 5px; padding-left: 2px; }
   .tp-resumo-item-op { font-size: 10px; font-weight: 600; color: var(--muted); background: #f2f3f8; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
   .tp-resumo-item-op strong { color: var(--text); font-weight: 700; }
@@ -7057,7 +7062,7 @@
     cliente: null,
     tabela: null,
     regiao: null,
-    selecionados: new Set(),
+    selecionados: new Map(),   // idx do item -> quantidade selecionada
     buscaResultados: [],
     buscaAtivoIdx: -1,
   };
@@ -7118,7 +7123,7 @@
   function tpAbrirTabela(tabela) {
     tpState.nivel = 'manutencao';
     tpState.tabela = tabela;
-    tpState.selecionados = new Set();
+    tpState.selecionados = new Map();
     tpState.buscaResultados = [];
     tpState.buscaAtivoIdx = -1;
     tpRenderBreadcrumb();
@@ -7186,9 +7191,10 @@
       + '</tr></thead><tbody>';
     itens.forEach(function(it, idx) {
       const sel = tpState.selecionados.has(idx);
+      const qtd = tpState.selecionados.get(idx) || 1;
       const dim = tpDimStr(it);
       html += '<tr class="' + (sel ? 'tp-row-selected' : '') + '" onclick="tpToggleItem(' + idx + ')" title="Clique para ' + (sel ? 'remover' : 'adicionar') + '">'
-        + '<td>' + escHtml(it.p) + '</td><td>' + escHtml(it.t) + '</td>'
+        + '<td>' + escHtml(it.p) + (sel && qtd > 1 ? ' <span class="tp-busca-dim">(x' + qtd + ')</span>' : '') + '</td><td>' + escHtml(it.t) + '</td>'
         + '<td>' + dim + '</td>'
         + '<td>' + fmtBRL(it.vp) + '</td><td>' + fmtBRL(it.fr) + '</td><td>' + fmtBRL(it.mu) + '</td>'
         + '<td>' + fmtBRL(it.ins) + '</td><td>' + fmtBRL(it.mob) + '</td><td>' + fmtBRL(it.art) + '</td>'
@@ -7203,7 +7209,7 @@
 
   function tpToggleItem(idx) {
     if (tpState.selecionados.has(idx)) tpState.selecionados.delete(idx);
-    else tpState.selecionados.add(idx);
+    else tpState.selecionados.set(idx, 1);
     tpRenderTabela();
   }
 
@@ -7213,7 +7219,23 @@
   }
 
   function tpLimparSelecao() {
-    tpState.selecionados = new Set();
+    tpState.selecionados = new Map();
+    tpRenderTabela();
+  }
+
+  function tpAlterarQtd(idx, delta) {
+    if (!tpState.selecionados.has(idx)) return;
+    const atual = tpState.selecionados.get(idx) || 1;
+    const nova = Math.max(1, atual + delta);
+    tpState.selecionados.set(idx, nova);
+    tpRenderTabela();
+  }
+
+  function tpDefinirQtd(idx, valor) {
+    if (!tpState.selecionados.has(idx)) return;
+    let nova = parseInt(valor, 10);
+    if (!Number.isFinite(nova) || nova < 1) nova = 1;
+    tpState.selecionados.set(idx, nova);
     tpRenderTabela();
   }
 
@@ -7295,7 +7317,7 @@
   }
 
   function tpEscolherSugestao(idx) {
-    tpState.selecionados.add(idx);
+    if (!tpState.selecionados.has(idx)) tpState.selecionados.set(idx, 1);
     const inputEl = document.getElementById('tp-busca-input');
     if (inputEl) inputEl.value = '';
     tpFiltrarSugestoes();
@@ -7307,7 +7329,7 @@
     const wrap = document.getElementById('tp-resumo-wrap');
     if (!wrap) return;
     const itens = tpState.regiao ? (TP_BK_MANUTENCAO[tpState.regiao] || []) : [];
-    const selecionadosArr = Array.from(tpState.selecionados).filter(function(i){ return itens[i]; }).sort(function(a,b){ return a-b; });
+    const selecionadosArr = Array.from(tpState.selecionados.keys()).filter(function(i){ return itens[i]; }).sort(function(a,b){ return a-b; });
 
     if (!tpState.regiao) {
       wrap.innerHTML = '<div class="tp-resumo-vazio">Informe a cidade e o estado para começar a selecionar produtos.</div>';
@@ -7332,15 +7354,21 @@
     let listaHtml = '';
     selecionadosArr.forEach(function(idx) {
       const it = itens[idx];
-      ['vp','fr','mu','ins','mob','art','lt','rd','tot'].forEach(function(k){ somas[k] += it[k]; });
+      const qtd = tpState.selecionados.get(idx) || 1;
+      ['vp','fr','mu','ins','mob','art','lt','rd','tot'].forEach(function(k){ somas[k] += it[k] * qtd; });
       const opsHtml = OP_LABELS
         .filter(function(o){ return it[o.k] > 0; })
-        .map(function(o){ return '<span class="tp-resumo-item-op">' + o.label + ': <strong>' + fmtBRL(it[o.k]) + '</strong></span>'; })
+        .map(function(o){ return '<span class="tp-resumo-item-op">' + o.label + ': <strong>' + fmtBRL(it[o.k] * qtd) + '</strong></span>'; })
         .join('');
       listaHtml += '<div class="tp-resumo-item">'
         + '<div class="tp-resumo-item-top">'
           + '<span class="nome">' + escHtml(it.p) + ' — ' + escHtml(it.t) + ' <span class="tp-busca-dim">(' + tpDimStr(it) + ')</span></span>'
-          + '<span class="valor">' + fmtBRL(it.tot) + '</span>'
+          + '<span class="tp-resumo-qtd">'
+            + '<button type="button" onclick="tpAlterarQtd(' + idx + ', -1)" title="Diminuir quantidade">−</button>'
+            + '<input type="number" min="1" step="1" value="' + qtd + '" onchange="tpDefinirQtd(' + idx + ', this.value)" title="Quantidade">'
+            + '<button type="button" onclick="tpAlterarQtd(' + idx + ', 1)" title="Aumentar quantidade">+</button>'
+          + '</span>'
+          + '<span class="valor">' + fmtBRL(it.tot * qtd) + '</span>'
           + '<button type="button" class="remover" onclick="tpRemoverItem(' + idx + ')" title="Remover">✕</button>'
         + '</div>'
         + (opsHtml ? '<div class="tp-resumo-item-ops">' + opsHtml + '</div>' : '')
